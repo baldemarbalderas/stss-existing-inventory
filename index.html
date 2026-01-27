@@ -12,12 +12,12 @@
       --border:#e5e7eb;
       --bg:#f6f7f9;
     }
-    body{
-      margin:0;
-      background:var(--bg);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      color:#111827;
-    }
+body{
+  margin:0;
+  background:#fff; /* make it feel like part of the page */
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color:#111827;
+}
     .wrap{
       max-width:1400px;
       margin:0 auto;
@@ -200,18 +200,16 @@
         <div class="filters">
           <div class="panelTitle">Filter Inventory</div>
 
+          <div class="fg"><label>Location</label><select id="fLoc"><option value="">All</option></select></div>
+          <div class="fg"><label>Type</label><select id="fType"><option value="">All</option></select></div>
+          <div class="fg"><label>Roof</label><select id="fRoof"><option value="">Any</option></select></div>
           <div class="fg"><label>Width Min (ft)</label><input id="wMin" placeholder="e.g. 10" inputmode="numeric" /></div>
           <div class="fg"><label>Width Max (ft)</label><input id="wMax" placeholder="e.g. 14" inputmode="numeric" /></div>
           <div class="fg"><label>Length Min (ft)</label><input id="lMin" placeholder="e.g. 16" inputmode="numeric" /></div>
           <div class="fg"><label>Length Max (ft)</label><input id="lMax" placeholder="e.g. 24" inputmode="numeric" /></div>
-
-          <div class="fg"><label>Type</label><select id="fType"><option value="">All</option></select></div>
-          <div class="fg"><label>Roof</label><select id="fRoof"><option value="">Any</option></select></div>
-          <div class="fg"><label>Availability</label><select id="fAvail"><option value="">Any</option></select></div>
-          <div class="fg"><label>Location</label><select id="fLoc"><option value="">All</option></select></div>
           <div class="fg"><label>Color</label><select id="fColor"><option value="">Any</option></select></div>
-
-          <div class="fg"><label>Max Price ($)</label><input id="pMax" placeholder="e.g. 15000" inputmode="numeric" /></div>
+          <div class="fg"><label>Max Price ($)</label><input id="pMax" placeholder="e.g. 15000" inputmode="numeric" /></div>      
+          <div class="fg"><label>Availability</label><select id="fAvail"><option value="">Any</option></select></div>
 
           <div class="filterActions">
             <button id="btnApply" class="apply" type="button">Apply Filters</button>
