@@ -529,5 +529,44 @@ function goFinance(val){
 
     sync(); // auto-load
   </script>
+
+  <!-- ITEM DETAIL MODAL -->
+<div id="stssModalBackdrop" class="stss-modal-backdrop" aria-hidden="true">
+  <div class="stss-modal" role="dialog" aria-modal="true" aria-labelledby="stssModalTitle">
+    <button class="stss-modal-close" id="stssModalClose" aria-label="Close">×</button>
+
+    <div class="stss-modal-grid">
+      <div class="stss-modal-media">
+        <img id="stssModalImg" alt="Inventory image" />
+      </div>
+
+      <div class="stss-modal-content">
+        <div class="stss-modal-kicker" id="stssModalSku"></div>
+        <h2 id="stssModalTitle" class="stss-modal-title"></h2>
+
+        <div class="stss-modal-meta" id="stssModalMeta"></div>
+
+        <div class="stss-modal-price">
+          <div class="stss-price-main" id="stssModalPrice"></div>
+          <div class="stss-price-sale" id="stssModalSale"></div>
+        </div>
+
+        <div class="stss-modal-badges" id="stssModalBadges"></div>
+
+        <div class="stss-modal-notes" id="stssModalNotesWrap">
+          <div class="stss-modal-notes-label">Notes</div>
+          <div id="stssModalNotes"></div>
+        </div>
+
+        <div class="stss-modal-actions">
+          <a class="stss-btn stss-btn-primary" id="stssModalCall" href="#">Call</a>
+          <a class="stss-btn" id="stssModalText" href="#">Text</a>
+          <a class="stss-btn" id="stssModalFinancing" href="#" target="_blank" rel="noopener">Financing</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
