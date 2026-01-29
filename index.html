@@ -133,6 +133,35 @@ body{
     }
     .actions a.primary{background:var(--primary);color:#fff;border:none}
 
+    /* Financing dropdown with arrow indicator */
+.actions .financingSelect{
+  flex: 1;
+  height: 44px;
+  padding: 10px 38px 10px 12px; /* space for arrow */
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: #fff;
+  font-weight: 900;
+  font-size: 14px;
+  color: #111827;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image:
+    url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<polyline points='6 9 12 15 18 9'/>\
+</svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+.actions .financingSelect:hover{
+  background-color:#f9fafb;
+}
+
+
     @media (max-width: 980px){
       .layout{grid-template-columns:1fr}
       .sidebar{position:relative;top:auto}
@@ -234,6 +263,20 @@ body{
     const GOOGLE_SHEETS_CSV_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vToQBXpgvNoKGYKw5iXFfkWLVhEhzQtv_Yn_21X0SBFM-CDLlnv-OSZLwzz3s1I9JstwAgyomaJ4fkH/pub?gid=1180471110&single=true&output=csv";
 
+    /* ======================= LENDER LINKS ======================= */
+const links = {
+  acorn: "https://www.acornfinance.com/pre-qualify/?d=OG3SM&utm_medium=web_pre_qual_link&loanAmount=70000#/personal",
+  hfs: "https://www.hfsfinancial.net/promo/680bd658016f111f82588af6/",
+  hearth: "https://app.gethearth.com/partners/south-texas-steel-studs-inc?utm_campaign=56100&utm_content=zero_percent&utm_medium=contractor-website&utm_source=contractor&utm_term=310x610"
+};
+
+function goFinance(val){
+  if(!val) return;
+  const url = links[val];
+  if(url) window.open(url, "_blank", "noopener,noreferrer");
+}
+
+    
     let items = [];
 
     const $ = (id) => document.getElementById(id);
@@ -343,9 +386,20 @@ body{
               </div>
 
               <div class="actions">
-                <a class="primary" href="#" onclick="return false;">View</a>
-                <a href="#" onclick="return false;">Financing</a>
-              </div>
+  <a class="primary" href="#" onclick="return false;">View</a>
+
+  <select
+    class="financingSelect"
+    onchange="goFinance(this.value); this.value='';"
+    onclick="event.stopPropagation();"
+  >
+    <option value="">Financing…</option>
+    <option value="acorn">Acorn</option>
+    <option value="hfs">HFS</option>
+    <option value="hearth">Hearth</option>
+  </select>
+</div>
+
             </div>
           </div>
         `;
