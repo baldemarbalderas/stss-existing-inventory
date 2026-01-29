@@ -12,12 +12,12 @@
       --border:#e5e7eb;
       --bg:#f6f7f9;
     }
-body{
-  margin:0;
-  background:#fff; /* make it feel like part of the page */
-  font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  color:#111827;
-}
+    body{
+      margin:0;
+      background:#fff; /* make it feel like part of the page */
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      color:#111827;
+    }
     .wrap{
       max-width:1400px;
       margin:0 auto;
@@ -27,11 +27,11 @@ body{
     .sub{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.4}
 
     .top{
-  display:flex;
-  align-items:flex-end;
-  gap:12px;
-  margin: 8px 0 14px;
-}
+      display:flex;
+      align-items:flex-end;
+      gap:12px;
+      margin: 8px 0 14px;
+    }
 
     .search{
       flex:1 1 520px; display:flex; gap:10px; align-items:center;
@@ -46,15 +46,14 @@ body{
       background:var(--primary); color:#fff; font-weight:900; font-size:14px; white-space:nowrap;
     }
 
-.controls{
-  display:flex;
-  flex-direction:row;
-  align-items:flex-end;
-  gap:8px;
-  flex:0 0 auto;
-  min-width:0;
-}
-
+    .controls{
+      display:flex;
+      flex-direction:row;
+      align-items:flex-end;
+      gap:8px;
+      flex:0 0 auto;
+      min-width:0;
+    }
     .controls label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
     .controls select,.controls button{
       width:100%; padding:11px 12px; border-radius:12px; border:1px solid var(--border);
@@ -70,9 +69,8 @@ body{
       gap:18px;
       align-items:start;
     }
-    .sidebar{
-      position:relative;
-            }
+    .sidebar{ position:relative; }
+
     .filters{
       background:#fff;
       border:1px solid var(--border);
@@ -83,8 +81,8 @@ body{
     }
     .filters .panelTitle{font-size:14px;font-weight:900;margin:0 0 6px}
     .fg label{font-size:11px;color:var(--muted);display:block;margin-bottom:5px}
-    .filters input,
 
+    .filters input,
     .filters select{
       width:100%;
       height:44px;              /* forces equal field height */
@@ -92,7 +90,7 @@ body{
       border-radius:12px;
       border:1px solid var(--border);
       font-size:14px;
-      line-height:44px;         /* helps inputs match selects */
+      line-height:44px;
       outline:none;
       background:#fff;
       box-sizing:border-box;
@@ -134,71 +132,172 @@ body{
     .actions a.primary{background:var(--primary);color:#fff;border:none}
 
     /* Financing dropdown with arrow indicator */
-.actions .financingSelect{
-  flex: 1;
-  height: 44px;
-  padding: 10px 38px 10px 12px; /* space for arrow */
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background-color: #fff;
-  font-weight: 900;
-  font-size: 14px;
-  color: #111827;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image:
-    url("data:image/svg+xml;utf8,\
+    .actions .financingSelect{
+      flex: 1;
+      height: 44px;
+      padding: 10px 38px 10px 12px; /* space for arrow */
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background-color: #fff;
+      font-weight: 900;
+      font-size: 14px;
+      color: #111827;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image:
+        url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
 <polyline points='6 9 12 15 18 9'/>\
 </svg>");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 14px;
-}
-
-.actions .financingSelect:hover{
-  background-color:#f9fafb;
-}
-
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
+    }
+    .actions .financingSelect:hover{ background-color:#f9fafb; }
 
     @media (max-width: 980px){
       .layout{grid-template-columns:1fr}
       .sidebar{position:relative;top:auto}
       .controls{flex:1 1 360px}
+      .top{flex-wrap:wrap}
     }
 
-        #btnSync{
-  display: none;
-}
-    /* --- Top bar inline layout tweaks --- */
+    /* hide Sync if you want */
+    #btnSync{ display:none; }
 
-/* Smaller reset button */
-#btnResetTop{
-  padding:8px 12px;
-  font-size:13px;
-  height:44px;
-  width:auto;
-  white-space:nowrap;
-}
+    /* Smaller reset button */
+    #btnResetTop{
+      padding:8px 12px;
+      font-size:13px;
+      height:44px;
+      width:auto;
+      white-space:nowrap;
+    }
+    #sort{ min-width:180px; height:44px; }
+    #btnSearch{ height:44px; }
 
-/* Sort dropdown sizing */
-#sort{
-  min-width:180px;
-  height:44px;
-}
+    /* ===== STSS MODAL ===== */
+    .stss-modal-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      z-index:9999;
+    }
+    .stss-modal-backdrop.is-open{ display:flex; }
 
-/* Match search button height */
-#btnSearch{
-  height:44px;
-}
+    .stss-modal{
+      width:min(980px, 100%);
+      background:#fff;
+      border-radius:16px;
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.25);
+      position:relative;
+    }
+    .stss-modal-close{
+      position:absolute; top:10px; right:12px;
+      width:36px; height:36px;
+      border:0; border-radius:10px;
+      background:rgba(0,0,0,.06);
+      font-size:22px; cursor:pointer;
+    }
+    .stss-modal-grid{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap:0;
+    }
+    @media (max-width: 900px){
+      .stss-modal-grid{ grid-template-columns: 1fr; }
+    }
+    .stss-modal-media{ background:#f3f5f7; }
+    .stss-modal-media img{
+      width:100%;
+      height:100%;
+      max-height:520px;
+      object-fit:cover;
+      display:block;
+    }
+    .stss-modal-content{ padding:18px 18px 20px; }
+    .stss-modal-kicker{ font-size:12px; opacity:.7; margin-bottom:4px; }
+    .stss-modal-title{ font-size:20px; line-height:1.2; margin:0 0 10px; }
+
+    .stss-modal-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      font-size:13px;
+      margin-bottom:10px;
+    }
+    .stss-chip{
+      padding:4px 8px;
+      border:1px solid #e6e9ee;
+      border-radius:999px;
+      background:#fafbfc;
+    }
+
+    .stss-modal-price{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      margin:10px 0 12px;
+    }
+    .stss-price-main{ font-size:22px; font-weight:800; }
+    .stss-price-sale{ font-size:14px; opacity:.65; text-decoration:line-through; }
+
+    .stss-modal-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:12px;
+    }
+    .stss-badge{
+      font-size:12px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#eef6ff;
+    }
+
+    #stssModalNotesWrap{ display:none; }
+    #stssModalNotesWrap.is-on{ display:block; }
+    .stss-modal-notes-label{
+      font-weight:700;
+      font-size:12px;
+      opacity:.75;
+      margin-bottom:6px;
+    }
+
+    .stss-modal-actions{
+      display:flex;
+      gap:10px;
+      margin-top:16px;
+      flex-wrap:wrap;
+    }
+    .stss-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid #e6e9ee;
+      background:#fff;
+      text-decoration:none;
+      font-weight:700;
+      font-size:14px;
+      color:#111827;
+    }
+    .stss-btn-primary{
+      background:#1677ff;
+      color:#fff;
+      border-color:#1677ff;
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
-    <!-- <h2 class="title">Existing Inventory</h2>
-    <p class="sub">Live inventory pulled from Google Sheets. Click Sync to refresh.</p> -->
-
     <div class="top">
       <div class="search">
         <input id="q" placeholder="Search by title, SKU, color, location, notes…" />
@@ -234,12 +333,14 @@ body{
           <div class="fg"><label>Location</label><select id="fLoc"><option value="">All</option></select></div>
           <div class="fg"><label>Type</label><select id="fType"><option value="">All</option></select></div>
           <div class="fg"><label>Roof</label><select id="fRoof"><option value="">Any</option></select></div>
+
           <div class="fg"><label>Width Min (ft)</label><input id="wMin" placeholder="e.g. 10" inputmode="numeric" /></div>
           <div class="fg"><label>Width Max (ft)</label><input id="wMax" placeholder="e.g. 14" inputmode="numeric" /></div>
           <div class="fg"><label>Length Min (ft)</label><input id="lMin" placeholder="e.g. 16" inputmode="numeric" /></div>
           <div class="fg"><label>Length Max (ft)</label><input id="lMax" placeholder="e.g. 24" inputmode="numeric" /></div>
+
           <div class="fg"><label>Color</label><select id="fColor"><option value="">Any</option></select></div>
-          <div class="fg"><label>Max Price ($)</label><input id="pMax" placeholder="e.g. 15000" inputmode="numeric" /></div>      
+          <div class="fg"><label>Max Price ($)</label><input id="pMax" placeholder="e.g. 15000" inputmode="numeric" /></div>
           <div class="fg"><label>Availability</label><select id="fAvail"><option value="">Any</option></select></div>
 
           <div class="filterActions">
@@ -258,27 +359,63 @@ body{
     </div>
   </div>
 
+  <!-- ITEM DETAIL MODAL -->
+  <div id="stssModalBackdrop" class="stss-modal-backdrop" aria-hidden="true">
+    <div class="stss-modal" role="dialog" aria-modal="true" aria-labelledby="stssModalTitle">
+      <button class="stss-modal-close" id="stssModalClose" aria-label="Close">×</button>
+
+      <div class="stss-modal-grid">
+        <div class="stss-modal-media">
+          <img id="stssModalImg" alt="Inventory image" />
+        </div>
+
+        <div class="stss-modal-content">
+          <div class="stss-modal-kicker" id="stssModalSku"></div>
+          <h2 id="stssModalTitle" class="stss-modal-title"></h2>
+
+          <div class="stss-modal-meta" id="stssModalMeta"></div>
+
+          <div class="stss-modal-price">
+            <div class="stss-price-main" id="stssModalPrice"></div>
+            <div class="stss-price-sale" id="stssModalSale"></div>
+          </div>
+
+          <div class="stss-modal-badges" id="stssModalBadges"></div>
+
+          <div id="stssModalNotesWrap">
+            <div class="stss-modal-notes-label">Notes</div>
+            <div id="stssModalNotes"></div>
+          </div>
+
+          <div class="stss-modal-actions">
+            <a class="stss-btn stss-btn-primary" id="stssModalCall" href="#">Call</a>
+            <a class="stss-btn" id="stssModalText" href="#">Text</a>
+            <a class="stss-btn" id="stssModalFinancing" href="#" target="_blank" rel="noopener">Financing</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // ✅ Your live CSV URL (converted from pubhtml)
+    // ✅ Your live CSV URL (pub -> output=csv)
     const GOOGLE_SHEETS_CSV_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vToQBXpgvNoKGYKw5iXFfkWLVhEhzQtv_Yn_21X0SBFM-CDLlnv-OSZLwzz3s1I9JstwAgyomaJ4fkH/pub?gid=1180471110&single=true&output=csv";
 
     /* ======================= LENDER LINKS ======================= */
-const links = {
-  acorn: "https://www.acornfinance.com/pre-qualify/?d=OG3SM&utm_medium=web_pre_qual_link&loanAmount=70000#/personal",
-  hfs: "https://www.hfsfinancial.net/promo/680bd658016f111f82588af6/",
-  hearth: "https://app.gethearth.com/partners/south-texas-steel-studs-inc?utm_campaign=56100&utm_content=zero_percent&utm_medium=contractor-website&utm_source=contractor&utm_term=310x610"
-};
+    const links = {
+      acorn: "https://www.acornfinance.com/pre-qualify/?d=OG3SM&utm_medium=web_pre_qual_link&loanAmount=70000#/personal",
+      hfs: "https://www.hfsfinancial.net/promo/680bd658016f111f82588af6/",
+      hearth: "https://app.gethearth.com/partners/south-texas-steel-studs-inc?utm_campaign=56100&utm_content=zero_percent&utm_medium=contractor-website&utm_source=contractor&utm_term=310x610"
+    };
 
-function goFinance(val){
-  if(!val) return;
-  const url = links[val];
-  if(url) window.open(url, "_blank", "noopener,noreferrer");
-}
+    function goFinance(val){
+      if(!val) return;
+      const url = links[val];
+      if(url) window.open(url, "_blank", "noopener,noreferrer");
+    }
 
-    
     let items = [];
-
     const $ = (id) => document.getElementById(id);
 
     const msg = $('msg');
@@ -307,7 +444,7 @@ function goFinance(val){
 
     function rebuildDropdown(selectEl, values, firstLabel){
       const prev = selectEl.value;
-      selectEl.innerHTML = `<option value="">${firstLabel}</option>` + values.map(v => `<option>${String(v)}</option>`).join('');
+      selectEl.innerHTML = ⁠ <option value="">${firstLabel}</option> ⁠ + values.map(v => ⁠ <option value="${String(v)}">${String(v)}</option> ⁠).join('');
       const ok = Array.from(selectEl.options).some(o => o.value === prev);
       selectEl.value = ok ? prev : '';
     }
@@ -352,9 +489,10 @@ function goFinance(val){
     }
 
     function render(list){
-      count.textContent = `Showing ${list.length} result${list.length===1?'':'s'}`;
+      window.__STSS_ITEMS = list; // so View can open the correct item
+      count.textContent = ⁠ Showing ${list.length} result${list.length===1?'':'s'} ⁠;
 
-      grid.innerHTML = list.map(x => {
+      grid.innerHTML = list.map((x, index) => {
         const w = num(x.width) ?? 0;
         const l = num(x.length) ?? 0;
         const area = w*l;
@@ -366,40 +504,52 @@ function goFinance(val){
         const img = splitImages(x.images)[0] || 'https://southtexassteelstuds.com/wp-content/uploads/2026/01/placeholder.png';
         const badges = String(x.badges ?? '').split('|').map(t=>t.trim()).filter(Boolean);
 
+        const tagLoc = x.location ? ⁠ <span class="tag">${x.location}</span> ⁠ : '';
+        const tagAvail = x.availability ? ⁠ <span class="tag">${x.availability}</span> ⁠ : '';
+        const tagColor = x.color ? ⁠ <span class="tag">${x.color}</span> ⁠ : '';
+        const badgeTags = badges.slice(0,3).map(b=>⁠ <span class="tag">${b}</span> ⁠).join('');
+
+        const strike = (sale !== null && sale > 0 && price !== null && price > sale)
+          ? ⁠ <div class="strike">$${Number(price).toLocaleString()}</div> ⁠
+          : '';
+
+        const metaParts = [
+          x.sku ? x.sku : '',
+          x.type ? x.type : '',
+          x.roof ? x.roof : '',
+          (w && l) ? ⁠ ${w}×${l} (${area} sf) ⁠ : ''
+        ].filter(Boolean).join(' · ');
+
         return `
           <div class="card">
             <img src="${img}" alt="">
             <div class="b">
               <h3 class="name">${x.title || x.sku || 'Inventory Item'}</h3>
-              <div class="meta">${x.sku || ''}${x.type ? ' · '+x.type : ''}${x.roof ? ' · '+x.roof : ''}${w&&l ? ` · ${w}×${l} (${area} sf)` : ''}</div>
+              <div class="meta">${metaParts}</div>
 
               <div class="tags">
-                ${x.location ? `<span class="tag">${x.location}</span>` : ''}
-                ${x.availability ? `<span class="tag">${x.availability}</span>` : ''}
-                ${x.color ? `<span class="tag">${x.color}</span>` : ''}
-                ${badges.slice(0,3).map(b=>`<span class="tag">${b}</span>`).join('')}
+                ${tagLoc}${tagAvail}${tagColor}${badgeTags}
               </div>
 
               <div class="priceRow">
                 <div class="price">$${Number(p).toLocaleString()}</div>
-                ${(sale !== null && sale > 0 && price !== null && price > sale) ? `<div class="strike">$${Number(price).toLocaleString()}</div>` : ''}
+                ${strike}
               </div>
 
               <div class="actions">
-  <a class="primary" href="#" onclick="return false;">View</a>
+                <a class="primary btn-view" data-idx="${index}" href="#" onclick="return false;">View</a>
 
-  <select
-    class="financingSelect"
-    onchange="goFinance(this.value); this.value='';"
-    onclick="event.stopPropagation();"
-  >
-    <option value="">Financing</option>
-    <option value="acorn">Acorn</option>
-    <option value="hfs">HFS</option>
-    <option value="hearth">Hearth</option>
-  </select>
-</div>
-
+                <select
+                  class="financingSelect"
+                  onchange="goFinance(this.value); this.value='';"
+                  onclick="event.stopPropagation();"
+                >
+                  <option value="">Financing</option>
+                  <option value="acorn">Acorn</option>
+                  <option value="hfs">HFS</option>
+                  <option value="hearth">Hearth</option>
+                </select>
+              </div>
             </div>
           </div>
         `;
@@ -462,7 +612,7 @@ function goFinance(val){
       msg.textContent = "Syncing…";
       try{
         const res = await fetch(GOOGLE_SHEETS_CSV_URL, { cache: "no-store" });
-        if(!res.ok) throw new Error(`HTTP ${res.status}`);
+        if(!res.ok) throw new Error(⁠ HTTP ${res.status} ⁠);
         const text = await res.text();
 
         const rows = parseCSV(text);
@@ -524,49 +674,135 @@ function goFinance(val){
     $('btnApply').addEventListener('click', apply);
     $('btnReset').addEventListener('click', resetAll);
     $('btnResetTop').addEventListener('click', resetAll);
-    [q, wMin, wMax, lMin, lMax, fType, fRoof, fAvail, fLoc, fColor, pMax].forEach(n => n.addEventListener('input', apply));
+
+    // inputs
+    [q, wMin, wMax, lMin, lMax, pMax].forEach(n => n.addEventListener('input', apply));
+    // selects
+    [fType, fRoof, fAvail, fLoc, fColor].forEach(s => s.addEventListener('change', apply));
     sort.addEventListener('change', apply);
 
     sync(); // auto-load
   </script>
 
-  <!-- ITEM DETAIL MODAL -->
-<div id="stssModalBackdrop" class="stss-modal-backdrop" aria-hidden="true">
-  <div class="stss-modal" role="dialog" aria-modal="true" aria-labelledby="stssModalTitle">
-    <button class="stss-modal-close" id="stssModalClose" aria-label="Close">×</button>
+  <script>
+    // ===== STSS MODAL LOGIC (Option 1) =====
+    const STSS_PHONE = "9562523997";
+    const STSS_PHONE_DISPLAY = "(956) 252-3997";
 
-    <div class="stss-modal-grid">
-      <div class="stss-modal-media">
-        <img id="stssModalImg" alt="Inventory image" />
-      </div>
+    const $backdrop = document.getElementById("stssModalBackdrop");
+    const $closeBtn = document.getElementById("stssModalClose");
 
-      <div class="stss-modal-content">
-        <div class="stss-modal-kicker" id="stssModalSku"></div>
-        <h2 id="stssModalTitle" class="stss-modal-title"></h2>
+    const $img   = document.getElementById("stssModalImg");
+    const $sku   = document.getElementById("stssModalSku");
+    const $title = document.getElementById("stssModalTitle");
+    const $meta  = document.getElementById("stssModalMeta");
+    const $price = document.getElementById("stssModalPrice");
+    const $sale  = document.getElementById("stssModalSale");
+    const $badges= document.getElementById("stssModalBadges");
+    const $notesWrap = document.getElementById("stssModalNotesWrap");
+    const $notes = document.getElementById("stssModalNotes");
 
-        <div class="stss-modal-meta" id="stssModalMeta"></div>
+    const $call = document.getElementById("stssModalCall");
+    const $text = document.getElementById("stssModalText");
+    const $fin  = document.getElementById("stssModalFinancing");
 
-        <div class="stss-modal-price">
-          <div class="stss-price-main" id="stssModalPrice"></div>
-          <div class="stss-price-sale" id="stssModalSale"></div>
-        </div>
+    function money(n){
+      const num = Number(String(n).replace(/[^0-9.]/g,""));
+      if (!isFinite(num)) return "";
+      return num.toLocaleString(undefined,{style:"currency",currency:"USD",maximumFractionDigits:0});
+    }
 
-        <div class="stss-modal-badges" id="stssModalBadges"></div>
+    function firstImage(images){
+      if(!images) return "";
+      const s = String(images).trim();
+      const parts = s.split(/[|,]/).map(x=>x.trim()).filter(Boolean);
+      return parts[0] || "";
+    }
 
-        <div class="stss-modal-notes" id="stssModalNotesWrap">
-          <div class="stss-modal-notes-label">Notes</div>
-          <div id="stssModalNotes"></div>
-        </div>
+    function openItemModal(item){
+      const imgUrl = firstImage(item.images || "");
+      $img.src = imgUrl || "https://via.placeholder.com/1200x800?text=STSS+Inventory";
 
-        <div class="stss-modal-actions">
-          <a class="stss-btn stss-btn-primary" id="stssModalCall" href="#">Call</a>
-          <a class="stss-btn" id="stssModalText" href="#">Text</a>
-          <a class="stss-btn" id="stssModalFinancing" href="#" target="_blank" rel="noopener">Financing</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+      $sku.textContent = item.sku ? ⁠ SKU: ${item.sku} ⁠ : "";
+      $title.textContent = item.title || "Inventory Item";
 
+      const chips = [];
+      if(item.type) chips.push(⁠ Type: ${item.type} ⁠);
+      if(item.width) chips.push(⁠ Width: ${item.width} ft ⁠);
+      if(item.length) chips.push(⁠ Length: ${item.length} ft ⁠);
+      if(item.roof) chips.push(⁠ Roof: ${item.roof} ⁠);
+      if(item.color) chips.push(⁠ Color: ${item.color} ⁠);
+      if(item.availability) chips.push(⁠ Status: ${item.availability} ⁠);
+      if(item.location) chips.push(⁠ Location: ${item.location} ⁠);
+
+      $meta.innerHTML = chips.map(t=>⁠ <span class="stss-chip">${t}</span> ⁠).join("");
+
+      const p = money(item.price);
+      const s = money(item.sale);
+
+      const saleNum = Number(String(item.sale).replace(/[^0-9.]/g,""));
+      const priceNum = Number(String(item.price).replace(/[^0-9.]/g,""));
+
+      if (s && p && isFinite(saleNum) && isFinite(priceNum) && saleNum < priceNum){
+        $price.textContent = s;
+        $sale.textContent = p;
+        $sale.style.display = "inline";
+      } else {
+        $price.textContent = p || s || "";
+        $sale.textContent = "";
+        $sale.style.display = "none";
+      }
+
+      const badgeText = (item.badges || "").toString();
+      const badgeList = badgeText.split(/[|,]/).map(x=>x.trim()).filter(Boolean);
+      $badges.innerHTML = badgeList.map(b=>⁠ <span class="stss-badge">${b}</span> ⁠).join("");
+
+      const notesText = (item.notes || "").toString().trim();
+      if (notesText){
+        $notesWrap.classList.add("is-on");
+        $notes.textContent = notesText;
+      } else {
+        $notesWrap.classList.remove("is-on");
+        $notes.textContent = "";
+      }
+
+      const smsMsg = encodeURIComponent(⁠ Hi STSS, I’m interested in ${item.sku ? item.sku + " — " : ""}${item.title || "this unit"}. Is it still available? ⁠);
+      $call.href = ⁠ tel:${STSS_PHONE} ⁠;
+      $call.textContent = ⁠ Call ${STSS_PHONE_DISPLAY} ⁠;
+      $text.href = ⁠ sms:${STSS_PHONE}?&body=${smsMsg} ⁠;
+      $text.textContent = "Text this unit";
+
+      const defaultFinancingUrl = "https://southtexassteelstuds.com/financing/";
+      $fin.href = defaultFinancingUrl;
+
+      $backdrop.classList.add("is-open");
+      $backdrop.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeItemModal(){
+      $backdrop.classList.remove("is-open");
+      $backdrop.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+    }
+
+    $closeBtn.addEventListener("click", closeItemModal);
+    $backdrop.addEventListener("click", (e)=>{
+      if(e.target === $backdrop) closeItemModal();
+    });
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeItemModal();
+    });
+
+    // Wire View buttons
+    document.addEventListener("click", (e)=>{
+      const btn = e.target.closest(".btn-view");
+      if(!btn) return;
+      const idx = Number(btn.dataset.idx);
+      const arr = window.__STSS_ITEMS || [];
+      if (!isFinite(idx) || !arr[idx]) return;
+      openItemModal(arr[idx]);
+    });
+  </script>
 </body>
 </html>
