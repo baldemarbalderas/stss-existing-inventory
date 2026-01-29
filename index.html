@@ -113,8 +113,14 @@ body{
     .meta{font-size:12px;color:var(--muted)}
     .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
     .tag{font-size:11px;padding:4px 8px;border-radius:999px;background:#f3f4f6;border:1px solid #eef2f7}
-    .priceRow{display:flex;gap:10px;align-items:baseline;margin-top:4px}
-    .price{font-size:18px;font-weight:900}
+.priceRow{
+  display:flex;
+  gap:10px;
+  align-items:baseline;
+  justify-content:flex-end; /* ← this is the key */
+  margin-top:4px;
+}
+    .price{font-size:18px;padding-right: 2px;font-weight:900}
     .strike{color:var(--muted);text-decoration:line-through;font-weight:700;font-size:13px}
     .actions{margin-top:auto;display:flex;gap:8px}
     .actions a{
@@ -405,7 +411,7 @@ function goFinance(val){
       class="financingSelect"
       onchange="goFinance(this.value); this.value='';"
     >
-      <option value="">Financing…</option>
+      <option value="">Financing</option>
       <option value="acorn">Acorn</option>
       <option value="hfs">HFS</option>
       <option value="hearth">Hearth</option>
