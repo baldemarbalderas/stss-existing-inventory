@@ -95,8 +95,13 @@ h1{font-size:34px;margin:12px 0 8px}
   padding:6px 10px; font-size:13px; color:#2b2f35;
 }
 .price{
-  display:flex; align-items:baseline; gap:10px; margin:6px 0 12px;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin:6px 0 12px;
+  justify-content:flex-end; /* 👈 right align */
 }
+
 .price .now{ font-size:20px; font-weight:700 }
 .price .was{ color:var(--muted); text-decoration:line-through }
 
