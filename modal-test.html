@@ -121,6 +121,17 @@ h1{font-size:34px;margin:12px 0 8px}
   white-space:nowrap;      /* keep on one line */
 }
 
+  /* Primary CTA (Details button) */
+.cta .btn.primary{
+  background: var(--stss-blue);
+  color: #fff;
+  border-color: var(--stss-blue);
+}
+
+.cta .btn.primary:hover{
+  background: #195f9c; /* optional hover */
+}
+
 /* Give Financing more space */
 .cta .financing{
   flex:1 1 auto;           /* take remaining width */
@@ -182,6 +193,58 @@ h1{font-size:34px;margin:12px 0 8px}
 
   .cta .btn{
     width: 100%;
+  }
+}
+
+  /* Modal CTA buttons */
+.mcta{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+
+.mbtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 16px;
+  border-radius:10px;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer;
+  border:1px solid #d9dee4;
+  background:#fff;
+  color:#111;
+  min-width:180px;
+}
+
+.mbtn.primary{
+  background: var(--stss-blue);
+  color:#fff;
+  border-color: var(--stss-blue);
+}
+
+.mbtn.primary:hover{
+  background:#195f9c;
+}
+
+.mbtn.outline{
+  color: var(--stss-blue);
+  border-color:#d9dee4;
+}
+
+.mbtn.outline:hover{
+  background:#f4f6f8;
+}
+
+/* Stack CTAs on small screens */
+@media (max-width:520px){
+  .mcta{
+    flex-direction:column;
+  }
+  .mbtn{
+    width:100%;
   }
 }
 
@@ -288,14 +351,15 @@ h1{font-size:34px;margin:12px 0 8px}
           </select>
         </div>
 
-        <div class="mcta">
-          <a id="mcontact" class="btnLink" href="#">
-            <div class="btn primary" style="display:inline-block;padding:10px 12px;border-radius:10px">Contact About This Unit</div>
-          </a>
-          <a id="mquote" class="btnLink" href="#">
-            <div class="btn outline" style="display:inline-block;padding:10px 12px;border-radius:10px">Get Quote PDF</div>
-          </a>
-        </div>
+<div class="mcta">
+  <a id="mcontact" class="mbtn primary" href="#">
+    Contact About This Unit
+  </a>
+  <a id="mquote" class="mbtn outline" href="#">
+    Get Quote PDF
+  </a>
+</div>
+
 
         <p class="note" id="mdesc"></p>
         <div class="smallMuted" id="mnotes"></div>
@@ -590,7 +654,7 @@ function cardHTML(x){
 <button class="btn primary" type="button" onclick='openModal("${escapeHtmlAttr(x.id)}")'>Details</button>
       <div class="financing">
         <select onchange="goFinance(this.value); this.value='';">
-          <option value="">Financing…</option>
+          <option value="">Financing</option>
           <option value="acorn">Acorn</option>
           <option value="hfs">HFS</option>
           <option value="hearth">Hearth</option>
