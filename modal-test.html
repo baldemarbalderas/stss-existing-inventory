@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>STSS | Inventory</title>
+<style>
+:root{
+  --stss-blue:#1e6fb8;
+  --stss-green:#2a8b1c;
+  --stss-gray:#f4f6f8;
+  --ink:#111;
+  --muted:#5b6470;
+  --accent:#f39c12;
+  --danger:#b00020;
+  --radius:14px;
+}
+
+*{box-sizing:border-box}
+body{
+  font: 16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--ink); margin:0; background:#fff;
+}
+.container{max-width:1220px;margin:0 auto;padding:20px 16px}
+h1{font-size:34px;margin:12px 0 8px}
+.sub{color:var(--muted);margin:0 0 18px}
+
+.toolbar{
+  display:grid; gap:12px; margin:10px 0 12px;
+  grid-template-columns: 1fr;
+}
+@media (min-width:900px){
+  .toolbar{grid-template-columns: 2fr 1fr;}
+}
+
+.searchbar{
+  display:flex; gap:10px; align-items:center;
+  background:var(--stss-gray); padding:8px 10px; border-radius:10px;
+}
+.searchbar input{
+  flex:1; border:0; outline:0; background:transparent; font-size:16px;
+}
+.searchbar button{
+  background:var(--stss-blue); color:#fff; border:0; padding:10px 14px;
+  border-radius:10px; cursor:pointer;
+}
+
+.controls{
+  display:flex; gap:10px; align-items:center; justify-content:flex-end;
+}
+.select, .button{
+  border:1px solid #d9dee4; background:#fff; padding:9px 12px; border-radius:10px; cursor:pointer;
+}
+.button{background:var(--stss-blue); color:#fff; border-color:var(--stss-blue)}
+.button.ghost{background:#fff;color:var(--stss-blue)}
+.button.warn{background:#fff;color:var(--danger);border-color:#f0c2c9}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px}
+
+.grid{
+  display:grid; gap:18px;
+  grid-template-columns:repeat(1,minmax(0,1fr));
+}
+@media (min-width:680px){ .grid{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:1024px){ .grid{grid-template-columns:repeat(3,1fr)} }
+
+.card{
+  border:1px solid #e6e9ee; border-radius:var(--radius); overflow:hidden;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
+  display:flex; flex-direction:column; background:#fff;
+}
+.card .media{
+  position:relative; aspect-ratio: 4/3; background:#eaeef3;
+  overflow:hidden;
+}
+.card .media img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .4s ease;
+}
+.card:hover .media img{ transform:scale(1.04) }
+.card .badges{
+  position:absolute; top:10px; left:10px; display:flex; gap:8px; flex-wrap:wrap;
+}
+.b-instock{background:var(--stss-green); color:#fff}
+.b-new{background:#222; color:#fff}
+.b-sale{background:var(--accent); color:#111}
+.b-reserved{background:#6b7280;color:#fff}
+.b-sold{background:#b00020;color:#fff}
+
+.card .body{ padding:12px 14px 14px }
+.card h3{ margin:2px 0 4px; font-size:18px }
+.meta{ color:var(--muted); font-size:13px; margin-bottom:8px }
+.specs{ display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 10px }
+.chip{
+  background:var(--stss-gray); border:1px solid #e3e7eb; border-radius:999px;
+  padding:6px 10px; font-size:13px; color:#2b2f35;
+}
+.price{
+  display:flex; align-items:baseline; gap:10px; margin:6px 0 12px;
+}
+.price .now{ font-size:20px; font-weight:700 }
+.price .was{ color:var(--muted); text-decoration:line-through }
+
+.cta{ display:flex; gap:10px; margin-top:auto; padding:0 14px 14px }
+.cta .btn{
+  flex:1; text-align:center; padding:10px 12px; border-radius:10px; cursor:pointer;
+  border:1px solid #d9dee4; background:#fff;
+}
+.cta .btn.primary{ background:var(--stss-blue); color:#fff; border-color:var(--stss-blue) }
+.cta .btn.outline{ color:var(--stss-blue) }
+
+.financing select{
+  width:100%; padding:10px 12px; border:1px solid #d9dee4; border-radius:10px;
+  background:#fff; cursor:pointer; font-weight:700;
+}
+
+/* Filters */
+.filters{
+  background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:10px;
+  margin:8px 0 16px;
+}
+.filters form{ display:grid; gap:10px; grid-template-columns:repeat(2,1fr) }
+@media (min-width:900px){
+  .filters form{ grid-template-columns: repeat(6, 1fr) }
+}
+.filters label{ display:flex; flex-direction:column; gap:6px; font-size:13px; color:#333 }
+.filters input[type="number"],
+.filters select{
+  padding:9px 10px; border:1px solid #d9dee4; border-radius:10px; background:#fff
+}
+
+/* Pagination */
+.pagination{display:flex; gap:10px; justify-content:center; margin:20px 0}
+.pagination button{padding:9px 12px;border-radius:10px;border:1px solid #d9dee4;background:#fff;cursor:pointer}
+.pagination button.active{background:var(--stss-blue);color:#fff;border-color:var(--stss-blue)}
+.empty{padding:24px;text-align:center;color:var(--muted);background:var(--stss-gray);border-radius:12px}
+.note{color:var(--muted);font-size:12px;margin-top:8px}
+
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
+.modal{background:#fff;border-radius:14px;max-width:980px;width:92%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eef1f4}
+.modal .mbody{display:grid;grid-template-columns:1fr;gap:14px;padding:14px}
+@media(min-width:860px){.modal .mbody{grid-template-columns:1.2fr 1fr}}
+.modal .gallery{aspect-ratio:4/3;background:#eef2f6;border-radius:10px;overflow:hidden}
+.modal .gallery img{width:100%;height:100%;object-fit:cover}
+.modal .mclose{border:0;background:#fff;font-size:22px;cursor:pointer}
+
+.mcta{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.mcta a{ text-decoration:none }
+.smallMuted{color:var(--muted);font-size:12px;margin-top:10px}
+.err{color:var(--danger);font-weight:700}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Existing Inventory</h1>
+  <p class="sub">Live inventory pulled from Google Sheets. Use search + filters to find your unit.</p>
+
+  <div class="toolbar">
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Search by title, SKU, color, location, or notes…" />
+      <button id="btnSearch" type="button">Search</button>
+    </div>
+    <div class="controls">
+      <select id="sort" class="select" aria-label="Sort">
+        <option value="newest">Sort: Newest</option>
+        <option value="price_asc">Price: Low → High</option>
+        <option value="price_desc">Price: High → Low</option>
+        <option value="size_desc">Size: Largest</option>
+        <option value="size_asc">Size: Smallest</option>
+      </select>
+      <button id="btnSync" class="button" type="button">Sync</button>
+      <button id="btnReset" class="button ghost" type="button">Reset</button>
+    </div>
+  </div>
+
+  <div class="filters">
+    <form id="filters">
+      <label>Type
+        <select name="type" id="fType">
+          <option value="">All</option>
+        </select>
+      </label>
+      <label>Roof
+        <select name="roof" id="fRoof">
+          <option value="">Any</option>
+        </select>
+      </label>
+      <label>Width Min (ft)
+        <input name="minW" type="number" placeholder="Min">
+      </label>
+      <label>Length Min (ft)
+        <input name="minL" type="number" placeholder="Min">
+      </label>
+      <label>Location
+        <select name="loc" id="fLoc">
+          <option value="">All</option>
+        </select>
+      </label>
+      <label>Availability
+        <select name="status" id="fStatus">
+          <option value="">Any</option>
+        </select>
+      </label>
+      <label>Max Price ($)
+        <input name="maxPrice" type="number" placeholder="e.g. 15000">
+      </label>
+      <label>Color
+        <select name="color" id="fColor">
+          <option value="">Any</option>
+        </select>
+      </label>
+    </form>
+  </div>
+
+  <div id="msg" class="note"></div>
+  <div id="grid" class="grid" role="list"></div>
+  <div id="pager" class="pagination"></div>
+
+  <p class="note">
+    Prices shown exclude delivery, site prep/foundation, and Texas sales tax (8.25%).
+    Financing options: Acorn, HFS, Hearth.
+  </p>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="mhead">
+      <h3 id="mtitle" style="margin:0;font-size:18px">Item</h3>
+      <button class="mclose" onclick="closeModal()" aria-label="Close">×</button>
+    </div>
+    <div class="mbody">
+      <div class="gallery"><img id="mimg" alt=""></div>
+      <div>
+        <div class="meta" id="msku"></div>
+        <div class="specs" id="mspecs"></div>
+
+        <div class="price">
+          <span class="now" id="mprice"></span>
+          <span class="was" id="mwas"></span>
+        </div>
+
+        <div class="financing">
+          <label for="finSel">Apply for Financing:</label>
+          <select id="finSel" onchange="goFinance(this.value)">
+            <option value="">Choose a lender…</option>
+            <option value="acorn">Acorn Finance</option>
+            <option value="hfs">HFS Financial</option>
+            <option value="hearth">Hearth</option>
+          </select>
+        </div>
+
+        <div class="mcta">
+          <a id="mcontact" class="btnLink" href="#">
+            <div class="btn primary" style="display:inline-block;padding:10px 12px;border-radius:10px">Contact About This Unit</div>
+          </a>
+          <a id="mquote" class="btnLink" href="#">
+            <div class="btn outline" style="display:inline-block;padding:10px 12px;border-radius:10px">Get Quote PDF</div>
+          </a>
+        </div>
+
+        <p class="note" id="mdesc"></p>
+        <div class="smallMuted" id="mnotes"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   1) GOOGLE SHEETS CSV (your published sheet)
+   ========================================================= */
+const GOOGLE_SHEETS_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vToQBXpgvNoKGYKw5iXFfkWLVhEhzQtv_Yn_21X0SBFM-CDLlnv-OSZLwzz3s1I9JstwAgyomaJ4fkH/pub?gid=1180471110&single=true&output=csv";
+
+/* =========================================================
+   2) STSS CONTACT + FINANCING LINKS
+   ========================================================= */
+const STSS_PHONE = "9562523997";
+const STSS_PHONE_DISPLAY = "(956) 252-3997";
+
+const links = {
+  acorn: "https://www.acornfinance.com/pre-qualify/?d=OG3SM&utm_medium=web_pre_qual_link&loanAmount=70000#/personal",
+  hfs: "https://www.hfsfinancial.net/promo/680bd658016f111f82588af6/",
+  hearth: "https://app.gethearth.com/partners/south-texas-steel-studs-inc?utm_campaign=56100&utm_content=zero_percent&utm_medium=contractor-website&utm_source=contractor&utm_term=310x610"
+};
+
+/* =========================================================
+   3) STATE
+   ========================================================= */
+const grid = document.getElementById("grid");
+const pager = document.getElementById("pager");
+const q = document.getElementById("q");
+const sortSel = document.getElementById("sort");
+const filtersForm = document.getElementById("filters");
+const msg = document.getElementById("msg");
+
+const fType = document.getElementById("fType");
+const fRoof = document.getElementById("fRoof");
+const fLoc = document.getElementById("fLoc");
+const fStatus = document.getElementById("fStatus");
+const fColor = document.getElementById("fColor");
+
+const pageSize = 9;
+
+let inventoryData = []; // normalized items
+let state = { page: 1, q: "", sort: "newest", f: {} };
+
+/* =========================================================
+   4) HELPERS
+   ========================================================= */
+function money(n){
+  const num = Number(n);
+  if (!isFinite(num) || num <= 0) return "";
+  return "$" + num.toLocaleString();
+}
+function sizeStr(w,l){
+  const W = Number(w), L = Number(l);
+  if (!isFinite(W) || !isFinite(L) || W<=0 || L<=0) return "";
+  return `${W}×${L} ft`;
+}
+function area(w,l){
+  const W = Number(w), L = Number(l);
+  return (isFinite(W)&&isFinite(L)) ? W*L : 0;
+}
+function normalizeYes(v){
+  const s = String(v ?? "").trim().toLowerCase();
+  return s === "yes" || s === "y" || s === "true" || s === "1";
+}
+function splitList(v){
+  return String(v ?? "")
+    .split(/[|,]/)
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+function firstImage(images){
+  const arr = Array.isArray(images) ? images : splitList(images);
+  return arr[0] || "https://southtexassteelstuds.com/wp-content/uploads/2026/01/placeholder.png";
+}
+
+/* Robust CSV parser (handles quotes) */
+function parseCSV(text){
+  const rows = [];
+  let i = 0, field = "", row = [], inQuotes = false;
+
+  while (i < text.length){
+    const c = text[i];
+
+    if (inQuotes){
+      if (c === '"'){
+        if (text[i+1] === '"'){ field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += c; i++; continue;
+    } else {
+      if (c === '"'){ inQuotes = true; i++; continue; }
+      if (c === ","){ row.push(field); field=""; i++; continue; }
+      if (c === "\n"){ row.push(field); rows.push(row); field=""; row=[]; i++; continue; }
+      if (c === "\r"){ i++; continue; }
+      field += c; i++; continue;
+    }
+  }
+  row.push(field);
+  rows.push(row);
+  return rows.filter(r => r.some(x => String(x).trim() !== ""));
+}
+
+function uniqueSorted(values){
+  return Array.from(new Set(values.filter(v => String(v).trim() !== "")))
+    .sort((a,b)=>String(a).localeCompare(String(b)));
+}
+
+function rebuildSelect(selectEl, values, firstLabel){
+  const prev = selectEl.value;
+  selectEl.innerHTML =
+    `<option value="">${firstLabel}</option>` +
+    values.map(v => `<option value="${String(v)}">${String(v)}</option>`).join("");
+  // keep selection if still valid
+  const ok = Array.from(selectEl.options).some(o => o.value === prev);
+  selectEl.value = ok ? prev : "";
+}
+
+/* =========================================================
+   5) LOAD FROM GOOGLE SHEETS
+   ========================================================= */
+async function sync(){
+  msg.textContent = "Syncing…";
+  msg.classList.remove("err");
+
+  try{
+    const res = await fetch(GOOGLE_SHEETS_CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (rows.length < 2) throw new Error("CSV is empty.");
+
+    const header = rows[0].map(h => String(h).trim());
+    const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+
+    const I = {
+      SKU: idx("SKU"),
+      Title: idx("Title"),
+      Type: idx("Type"),
+      Width: idx("Width"),
+      Length: idx("Length"),
+      Roof: idx("Roof"),
+      Color: idx("Color"),
+      Price: idx("Price"),
+      Sale: idx("Sale"),
+      Availability: idx("Availability"),
+      Location: idx("Location"),
+      Images: idx("Images"),
+      Badges: idx("Badges"),
+      Notes: idx("Notes"),
+      Added: idx("Added"),
+      Show: idx("Show")
+    };
+
+    inventoryData = rows.slice(1).map(r => {
+      const obj = {
+        id: I.SKU>-1 ? r[I.SKU] : "",
+        title: I.Title>-1 ? r[I.Title] : "",
+        type: I.Type>-1 ? r[I.Type] : "",
+        width: I.Width>-1 ? Number(r[I.Width]) : null,
+        length: I.Length>-1 ? Number(r[I.Length]) : null,
+        roof: I.Roof>-1 ? r[I.Roof] : "",
+        color: I.Color>-1 ? r[I.Color] : "",
+        price: I.Price>-1 ? Number(String(r[I.Price]).replace(/[^0-9.]/g,"")) : null,
+        sale: I.Sale>-1 ? Number(String(r[I.Sale]).replace(/[^0-9.]/g,"")) : null,
+        status: I.Availability>-1 ? r[I.Availability] : "",
+        location: I.Location>-1 ? r[I.Location] : "",
+        images: I.Images>-1 ? splitList(r[I.Images]) : [],
+        badges: I.Badges>-1 ? splitList(r[I.Badges]) : [],
+        notes: I.Notes>-1 ? r[I.Notes] : "",
+        added: I.Added>-1 ? r[I.Added] : "",
+        show: I.Show>-1 ? r[I.Show] : "Yes"
+      };
+
+      // normalize “NaN”
+      if (!isFinite(obj.price)) obj.price = null;
+      if (!isFinite(obj.sale)) obj.sale = null;
+
+      return obj;
+    }).filter(x => normalizeYes(x.show));
+
+    // rebuild dropdown options from live data
+    rebuildSelect(fType, uniqueSorted(inventoryData.map(x=>x.type)), "All");
+    rebuildSelect(fRoof, uniqueSorted(inventoryData.map(x=>x.roof)), "Any");
+    rebuildSelect(fLoc, uniqueSorted(inventoryData.map(x=>x.location)), "All");
+    rebuildSelect(fStatus, uniqueSorted(inventoryData.map(x=>x.status)), "Any");
+    rebuildSelect(fColor, uniqueSorted(inventoryData.map(x=>x.color)), "Any");
+
+    msg.textContent = `Synced ${inventoryData.length} item(s).`;
+    state.page = 1;
+    render();
+  }catch(e){
+    msg.textContent = "Sync failed: confirm the sheet is Published to web and the CSV URL opens in a browser.";
+    msg.classList.add("err");
+    grid.innerHTML = `<div class="empty">Unable to load inventory.</div>`;
+    pager.innerHTML = "";
+  }
+}
+
+/* =========================================================
+   6) FILTERING + SORTING + RENDER
+   ========================================================= */
+function applyAll(data){
+  let a = [...data];
+
+  // query
+  const term = state.q.trim().toLowerCase();
+  if (term){
+    a = a.filter(x =>
+      `${x.title} ${x.id} ${x.type} ${x.roof} ${x.color} ${x.location} ${x.status} ${x.notes}`
+        .toLowerCase().includes(term)
+    );
+  }
+
+  // filters
+  const f = state.f;
+  if (f.type) a = a.filter(x => x.type === f.type);
+  if (f.roof) a = a.filter(x => x.roof === f.roof);
+  if (f.loc) a = a.filter(x => x.location === f.loc);
+  if (f.status) a = a.filter(x => x.status === f.status);
+  if (f.color) a = a.filter(x => x.color === f.color);
+
+  if (f.minW) a = a.filter(x => Number(x.width) >= Number(f.minW));
+  if (f.minL) a = a.filter(x => Number(x.length) >= Number(f.minL));
+
+  if (f.maxPrice){
+    const cap = Number(f.maxPrice);
+    a = a.filter(x => {
+      const p = (x.sale && x.sale > 0) ? x.sale : x.price;
+      return isFinite(p) ? p <= cap : true;
+    });
+  }
+
+  // sort
+  const s = state.sort;
+  const byDate = (x)=> new Date(x.added || "1970-01-01").getTime();
+  const byPrice = (x)=> (x.sale && x.sale > 0) ? x.sale : (x.price || 0);
+  const bySize = (x)=> area(x.width, x.length);
+
+  if (s === "newest") a.sort((x,y)=>byDate(y)-byDate(x));
+  if (s === "price_asc") a.sort((x,y)=>byPrice(x)-byPrice(y));
+  if (s === "price_desc") a.sort((x,y)=>byPrice(y)-byPrice(x));
+  if (s === "size_asc") a.sort((x,y)=>bySize(x)-bySize(y));
+  if (s === "size_desc") a.sort((x,y)=>bySize(y)-bySize(x));
+
+  return a;
+}
+
+function badgeClass(b){
+  const s = String(b).toLowerCase();
+  if (s.includes("sale")) return "b-sale";
+  if (s.includes("reserved")) return "b-reserved";
+  if (s.includes("sold")) return "b-sold";
+  if (s.includes("stock") || s.includes("in stock")) return "b-instock";
+  return "b-new";
+}
+
+function cardHTML(x){
+  const tags = (x.badges||[]).slice(0,4).map(b =>
+    `<span class="badge ${badgeClass(b)}">${b}</span>`
+  ).join("");
+
+  const now = (x.sale && x.sale > 0) ? x.sale : x.price;
+  const was = (x.sale && x.sale > 0 && x.price && x.price > x.sale) ? `<span class="was">${money(x.price)}</span>` : "";
+
+  return `
+  <article class="card" role="listitem">
+    <div class="media" onclick='openModal("${escapeHtmlAttr(x.id)}")' style="cursor:pointer">
+      <img src="${escapeHtmlAttr(firstImage(x.images))}" alt="${escapeHtmlAttr(x.title || x.id)}">
+      <div class="badges">${tags}</div>
+    </div>
+
+    <div class="body">
+      <h3>${escapeHtml(x.title || x.id || "Inventory Item")}</h3>
+      <div class="meta">SKU ${escapeHtml(x.id || "")}${x.type ? ` • ${escapeHtml(x.type)}` : ""}${x.roof ? ` • ${escapeHtml(x.roof)} roof` : ""}</div>
+
+      <div class="specs">
+        ${sizeStr(x.width,x.length) ? `<span class="chip">${escapeHtml(sizeStr(x.width,x.length))}</span>` : ""}
+        ${x.color ? `<span class="chip">${escapeHtml(x.color)}</span>` : ""}
+        ${x.location ? `<span class="chip">${escapeHtml(x.location)}</span>` : ""}
+        ${x.status ? `<span class="chip">${escapeHtml(x.status)}</span>` : ""}
+      </div>
+
+      <div class="price"><span class="now">${money(now) || ""}</span> ${was}</div>
+    </div>
+
+    <div class="cta">
+      <button class="btn primary" type="button" onclick='openModal("${escapeHtmlAttr(x.id)}")'>View / Contact</button>
+      <div class="financing">
+        <select onchange="goFinance(this.value); this.value='';">
+          <option value="">Financing…</option>
+          <option value="acorn">Acorn</option>
+          <option value="hfs">HFS</option>
+          <option value="hearth">Hearth</option>
+        </select>
+      </div>
+    </div>
+  </article>`;
+}
+
+function render(){
+  const items = applyAll(inventoryData);
+
+  // pagination
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  state.page = Math.min(state.page, totalPages);
+  const start = (state.page - 1) * pageSize;
+  const slice = items.slice(start, start + pageSize);
+
+  grid.innerHTML = slice.length
+    ? slice.map(cardHTML).join("")
+    : `<div class="empty">No results. Try clearing filters.</div>`;
+
+  pager.innerHTML = Array.from({length: totalPages}, (_,i)=>i+1).map(n =>
+    `<button class="${n===state.page?'active':''}" onclick="gotoPage(${n})">${n}</button>`
+  ).join("");
+}
+
+/* =========================================================
+   7) MODAL
+   ========================================================= */
+function openModal(id){
+  const x = inventoryData.find(i => String(i.id) === String(id));
+  if (!x) return;
+
+  document.getElementById("mtitle").textContent = x.title || "Inventory Item";
+  document.getElementById("mimg").src = firstImage(x.images);
+
+  const metaLine = [
+    x.id ? `SKU ${x.id}` : "",
+    x.type || "",
+    x.location || ""
+  ].filter(Boolean).join(" • ");
+  document.getElementById("msku").textContent = metaLine;
+
+  const specs = [];
+  if (sizeStr(x.width,x.length)) specs.push(`<span class="chip">${escapeHtml(sizeStr(x.width,x.length))}</span>`);
+  if (x.roof) specs.push(`<span class="chip">${escapeHtml(x.roof)} roof</span>`);
+  if (x.color) specs.push(`<span class="chip">${escapeHtml(x.color)}</span>`);
+  if (x.status) specs.push(`<span class="chip">${escapeHtml(x.status)}</span>`);
+  document.getElementById("mspecs").innerHTML = specs.join("");
+
+  const now = (x.sale && x.sale > 0) ? x.sale : x.price;
+  document.getElementById("mprice").textContent = money(now) || "";
+  document.getElementById("mwas").textContent =
+    (x.sale && x.sale > 0 && x.price && x.price > x.sale) ? money(x.price) : "";
+
+  document.getElementById("mdesc").textContent = x.notes ? x.notes : "";
+  document.getElementById("mnotes").textContent =
+    x.notes ? "" : " ";
+
+  // Contact links: Call + SMS prefill
+  const smsBody = encodeURIComponent(`Hi STSS, I’m interested in ${x.id ? x.id + " — " : ""}${x.title || "this unit"}. Is it still available?`);
+  const contactHref = `sms:${STSS_PHONE}?&body=${smsBody}`;
+  document.getElementById("mcontact").href = contactHref;
+
+  // Quote PDF button (placeholder). If you later generate PDFs, replace with your URL.
+  document.getElementById("mquote").href = "https://southtexassteelstuds.com/contact/";
+
+  // reset lender dropdown
+  document.getElementById("finSel").value = "";
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+}
+window.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+function gotoPage(n){ state.page = n; render(); }
+
+function goFinance(which){
+  if (!which) return;
+  const url = links[which];
+  if (url) window.open(url, "_blank", "noopener,noreferrer");
+}
+
+/* =========================================================
+   8) EVENTS
+   ========================================================= */
+document.getElementById("btnSearch").onclick = () => {
+  state.q = q.value;
+  state.page = 1;
+  render();
+};
+q.addEventListener("keydown", e => {
+  if (e.key === "Enter"){
+    state.q = q.value;
+    state.page = 1;
+    render();
+  }
+});
+sortSel.onchange = () => { state.sort = sortSel.value; render(); };
+
+filtersForm.addEventListener("change", () => {
+  const fd = new FormData(filtersForm);
+  state.f = Object.fromEntries(fd.entries());
+  state.page = 1;
+  render();
+});
+
+document.getElementById("btnReset").onclick = () => {
+  q.value = "";
+  state.q = "";
+  filtersForm.reset();
+  state.f = {};
+  state.page = 1;
+  sortSel.value = "newest";
+  state.sort = "newest";
+  render();
+};
+
+document.getElementById("btnSync").onclick = sync;
+document.getElementById("modal").addEventListener("click", (e)=>{
+  if (e.target && e.target.id === "modal") closeModal();
+});
+
+/* =========================================================
+   9) SAFETY: escape helpers
+   ========================================================= */
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+function escapeHtmlAttr(str){
+  // keep it simple; escape quotes and angle brackets
+  return escapeHtml(str).replaceAll("`","&#96;");
+}
+
+/* init */
+sync();
+</script>
+</body>
+</html>
