@@ -100,17 +100,41 @@ h1{font-size:34px;margin:12px 0 8px}
 .price .now{ font-size:20px; font-weight:700 }
 .price .was{ color:var(--muted); text-decoration:line-through }
 
-.cta{ display:flex; gap:10px; margin-top:auto; padding:0 14px 14px }
-.cta .btn{
-  flex:1; text-align:center; padding:10px 12px; border-radius:10px; cursor:pointer;
-  border:1px solid #d9dee4; background:#fff;
+.cta{
+  display:flex;
+  gap:12px;
+  margin-top:auto;
+  padding:0 14px 14px;
+  align-items:stretch;
 }
-.cta .btn.primary{ background:var(--stss-blue); color:#fff; border-color:var(--stss-blue) }
-.cta .btn.outline{ color:var(--stss-blue) }
+
+/* Make View/Contact shorter */
+.cta .btn{
+  flex:0 0 auto;           /* don't grow */
+  width:140px;             /* <-- adjust: 120–160 */
+  text-align:center;
+  padding:10px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  border:1px solid #d9dee4;
+  background:#fff;
+  white-space:nowrap;      /* keep on one line */
+}
+
+/* Give Financing more space */
+.cta .financing{
+  flex:1 1 auto;           /* take remaining width */
+  min-width:0;
+}
 
 .financing select{
-  width:100%; padding:10px 12px; border:1px solid #d9dee4; border-radius:10px;
-  background:#fff; cursor:pointer; font-weight:700;
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #d9dee4;
+  border-radius:10px;
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
 }
 
 /* Filters */
@@ -149,6 +173,18 @@ h1{font-size:34px;margin:12px 0 8px}
 .mcta a{ text-decoration:none }
 .smallMuted{color:var(--muted);font-size:12px;margin-top:10px}
 .err{color:var(--danger);font-weight:700}
+
+  /* Mobile: stack CTA buttons */
+@media (max-width: 420px){
+  .cta{
+    flex-direction: column;
+  }
+
+  .cta .btn{
+    width: 100%;
+  }
+}
+
 </style>
 </head>
 
@@ -551,7 +587,7 @@ function cardHTML(x){
     </div>
 
     <div class="cta">
-      <button class="btn primary" type="button" onclick='openModal("${escapeHtmlAttr(x.id)}")'>View / Contact</button>
+<button class="btn primary" type="button" onclick='openModal("${escapeHtmlAttr(x.id)}")'>Details</button>
       <div class="financing">
         <select onchange="goFinance(this.value); this.value='';">
           <option value="">Financing…</option>
