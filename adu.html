@@ -184,7 +184,21 @@ h1{font-size:34px;margin:12px 0 8px}
 .err{color:var(--danger);font-weight:700}
 
 /* Modal */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
+.modal-backdrop{
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.45);
+  z-index: 9999;
+}
+
+/* lock the page behind the modal */
+body.modal-open{
+  overflow: hidden;
+}
+
 .modal{background:#fff;border-radius:14px;max-width:980px;width:92%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eef1f4}
 .modal .mbody{display:grid;grid-template-columns:1fr;gap:14px;padding:14px}
@@ -719,8 +733,10 @@ function openModal(id){
   const x = aduData.find(i => String(i.id) === String(id));
   if (!x) return;
 
-  document.getElementById("mtitle").textContent = x.title || "ADU";
-  document.getElementById("mimg").src = firstImage(x.images);
+
+  document.getElementById("modal").style.display = "flex";
+  document.body.classList.add("modal-open");
+}
 
   const metaLine = [
     x.id ? `SKU ${x.id}` : "",
@@ -750,7 +766,10 @@ function openModal(id){
   document.getElementById("modal").style.display = "flex";
 }
 
-function closeModal(){ document.getElementById("modal").style.display = "none"; }
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+  document.body.classList.remove("modal-open");
+}
 window.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 function gotoPage(n){
   state.page = n;
