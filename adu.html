@@ -109,8 +109,11 @@ h1{font-size:34px;margin:12px 0 8px}
   padding:0 14px 14px;
   align-items:stretch;
 }
+
+/* Make Details shorter like inventory */
 .cta .btn{
-  flex:1 1 auto;
+  flex:0 0 auto;
+  width:140px;
   text-align:center;
   padding:10px 12px;
   border-radius:10px;
@@ -119,13 +122,31 @@ h1{font-size:34px;margin:12px 0 8px}
   background:#fff;
   white-space:nowrap;
 }
+
 .cta .btn.primary{
   background: var(--stss-blue);
-  color: #fff;
+  color:#fff;
   border-color: var(--stss-blue);
 }
 .cta .btn.primary:hover{ background:#195f9c; }
 
+/* Financing dropdown takes remaining width */
+.cta .financing{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.financing select{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #d9dee4;
+  border-radius:10px;
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+}
+
+/* Mobile: stack CTA buttons */
 @media (max-width: 420px){
   .cta{ flex-direction: column; }
   .cta .btn{ width: 100%; }
@@ -164,6 +185,7 @@ h1{font-size:34px;margin:12px 0 8px}
 .modal .gallery img{width:100%;height:100%;object-fit:cover}
 .modal .mclose{border:0;background:#fff;font-size:22px;cursor:pointer}
 
+/* Modal financing */
 .mcta{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
 .mcta a{ text-decoration:none }
 .mbtn{
@@ -196,6 +218,8 @@ h1{font-size:34px;margin:12px 0 8px}
   .mcta{ flex-direction:column; }
   .mbtn{ width:100%; }
 }
+
+.smallMuted{color:var(--muted);font-size:12px;margin-top:10px}
 </style>
 </head>
 
@@ -298,6 +322,7 @@ h1{font-size:34px;margin:12px 0 8px}
 
   <p class="note">
     Pricing shown may exclude delivery, site prep/foundation, and applicable taxes/fees.
+    Financing options: Acorn, HFS, Hearth.
   </p>
 </div>
 
@@ -319,9 +344,19 @@ h1{font-size:34px;margin:12px 0 8px}
           <span class="was" id="mwas"></span>
         </div>
 
+        <div class="financing" style="margin-top:10px">
+          <label for="finSel">Apply for Financing:</label>
+          <select id="finSel" onchange="goFinance(this.value)">
+            <option value="">Choose a lender…</option>
+            <option value="acorn">Acorn Finance</option>
+            <option value="hfs">HFS Financial</option>
+            <option value="hearth">Hearth</option>
+          </select>
+        </div>
+
         <div class="mcta">
-          <a id="mquote" class="mbtn primary" href="https://southtexassteelstuds.com/contact/" target="_top">Request a Quote</a>
-          <a id="mback" class="mbtn outline" href="#" onclick="closeModal(); return false;">Back to Listings</a>
+          <a class="mbtn primary" href="https://southtexassteelstuds.com/contact/" target="_top">Request a Quote</a>
+          <a class="mbtn outline" href="#" onclick="closeModal(); return false;">Back to Listings</a>
         </div>
 
         <p class="note" id="mdesc"></p>
@@ -333,14 +368,22 @@ h1{font-size:34px;margin:12px 0 8px}
 
 <script>
 /* =========================================================
-   1) GOOGLE SHEETS CSV (publish the ADU tab and use its gid)
+   1) GOOGLE SHEETS CSV (ADU tab gid = 1310723517)
    ========================================================= */
 const GOOGLE_SHEETS_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vToQBXpgvNoKGYKw5iXFfkWLVhEhzQtv_Yn_21X0SBFM-CDLlnv-OSZLwzz3s1I9JstwAgyomaJ4fkH/pub?gid=1310723517&single=true&output=csv";
 
+/* =========================================================
+   2) FINANCING LINKS (same as inventory)
+   ========================================================= */
+const links = {
+  acorn: "https://www.acornfinance.com/pre-qualify/?d=OG3SM&utm_medium=web_pre_qual_link&loanAmount=70000#/personal",
+  hfs: "https://www.hfsfinancial.net/promo/680bd658016f111f82588af6/",
+  hearth: "https://app.gethearth.com/partners/south-texas-steel-studs-inc?utm_campaign=56100&utm_content=zero_percent&utm_medium=contractor-website&utm_source=contractor&utm_term=310x610"
+};
 
 /* =========================================================
-   2) STATE
+   3) STATE
    ========================================================= */
 const grid = document.getElementById("grid");
 const pager = document.getElementById("pager");
@@ -356,7 +399,7 @@ let aduData = [];
 let state = { page: 1, q: "", sort: sortSel.value, f: {} };
 
 /* =========================================================
-   3) HELPERS
+   4) HELPERS
    ========================================================= */
 function money(n){
   const num = Number(n);
@@ -431,17 +474,13 @@ function parseCSV(text){
 }
 
 /* =========================================================
-   4) LOAD FROM GOOGLE SHEETS
+   5) LOAD FROM GOOGLE SHEETS
    ========================================================= */
 async function sync(){
   msg.textContent = "Syncing…";
   msg.classList.remove("err");
 
   try{
-    if (!GOOGLE_SHEETS_CSV_URL || GOOGLE_SHEETS_CSV_URL.includes("PASTE_YOUR_ADU_TAB_CSV_URL_HERE")){
-      throw new Error("Missing CSV URL.");
-    }
-
     const res = await fetch(GOOGLE_SHEETS_CSV_URL, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
@@ -517,7 +556,7 @@ async function sync(){
 }
 
 /* =========================================================
-   5) FILTERING + SORTING + RENDER
+   6) FILTERING + SORTING + RENDER
    ========================================================= */
 function applyAll(data){
   let a = [...data];
@@ -588,7 +627,7 @@ function applyAll(data){
 }
 
 function cardHTML(x){
-  // Use status as a badge automatically + any extra badges from sheet
+  // status badge + sheet badges, and add "Sale" badge if on sale
   const badgeList = [];
   if (x.status) badgeList.push(x.status);
   (x.badges || []).forEach(b => badgeList.push(b));
@@ -638,7 +677,14 @@ function cardHTML(x){
 
     <div class="cta">
       <button class="btn primary" type="button" onclick='openModal("${escapeHtmlAttr(x.id)}")'>Details</button>
-      <a class="btn" href="https://southtexassteelstuds.com/contact/" target="_top" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">Request Quote</a>
+      <div class="financing">
+        <select onchange="goFinance(this.value); this.value='';">
+          <option value="">Financing</option>
+          <option value="acorn">Acorn</option>
+          <option value="hfs">HFS</option>
+          <option value="hearth">Hearth</option>
+        </select>
+      </div>
     </div>
   </article>`;
 }
@@ -661,7 +707,7 @@ function render(){
 }
 
 /* =========================================================
-   6) MODAL
+   7) MODAL
    ========================================================= */
 function openModal(id){
   const x = aduData.find(i => String(i.id) === String(id));
@@ -686,23 +732,30 @@ function openModal(id){
 
   const now = (x.sale && x.sale > 0) ? x.sale : x.price;
   const was = (x.sale && x.sale > 0 && x.price && x.price > x.sale) ? money(x.price) : "";
-
   document.getElementById("mprice").textContent = money(now) || "";
   document.getElementById("mwas").textContent = was;
 
   document.getElementById("mdesc").textContent = x.notes ? x.notes : "";
   document.getElementById("mnotes").textContent = x.notes ? "" : " ";
 
+  // reset lender dropdown
+  document.getElementById("finSel").value = "";
+
   document.getElementById("modal").style.display = "flex";
 }
-function closeModal(){
-  document.getElementById("modal").style.display = "none";
-}
+
+function closeModal(){ document.getElementById("modal").style.display = "none"; }
 window.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 function gotoPage(n){ state.page = n; render(); }
 
+function goFinance(which){
+  if (!which) return;
+  const url = links[which];
+  if (url) window.open(url, "_blank", "noopener,noreferrer");
+}
+
 /* =========================================================
-   7) EVENTS
+   8) EVENTS
    ========================================================= */
 document.getElementById("btnSearch").onclick = () => {
   state.q = q.value;
@@ -742,7 +795,7 @@ document.getElementById("modal").addEventListener("click", (e)=>{
 });
 
 /* =========================================================
-   8) SAFETY: escape helpers
+   9) SAFETY: escape helpers
    ========================================================= */
 function escapeHtml(str){
   return String(str ?? "")
