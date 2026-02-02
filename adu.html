@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>STSS | ADUs</title>
+
+<style>
+:root{
+  --stss-blue:#1e6fb8;
+  --stss-green:#2a8b1c;
+  --stss-gray:#f4f6f8;
+  --ink:#111;
+  --muted:#5b6470;
+  --accent:#f39c12;
+  --danger:#b00020;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+body{
+  font: 16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+  color:var(--ink); margin:0; background:#fff;
+}
+.container{max-width:1220px;margin:0 auto;padding:20px 16px}
+h1{font-size:34px;margin:12px 0 8px}
+.sub{color:var(--muted);margin:0 0 18px}
+
+.toolbar{
+  display:grid; gap:12px; margin:10px 0 12px;
+  grid-template-columns: 1fr;
+}
+@media (min-width:900px){
+  .toolbar{grid-template-columns: 2fr 1fr;}
+}
+.searchbar{
+  display:flex; gap:10px; align-items:center;
+  background:var(--stss-gray); padding:8px 10px; border-radius:10px;
+}
+.searchbar input{
+  flex:1; border:0; outline:0; background:transparent; font-size:16px;
+}
+.searchbar button{
+  background:var(--stss-blue); color:#fff; border:0; padding:10px 14px;
+  border-radius:10px; cursor:pointer;
+}
+.controls{
+  display:flex; gap:10px; align-items:center; justify-content:flex-end;
+}
+.select, .button{
+  border:1px solid #d9dee4; background:#fff; padding:9px 12px; border-radius:10px; cursor:pointer;
+}
+.button{background:var(--stss-blue); color:#fff; border-color:var(--stss-blue)}
+.button.ghost{background:#fff;color:var(--stss-blue)}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px}
+
+.grid{
+  display:grid; gap:18px;
+  grid-template-columns:repeat(1,minmax(0,1fr));
+}
+@media (min-width:680px){ .grid{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:1024px){ .grid{grid-template-columns:repeat(3,1fr)} }
+
+.card{
+  border:1px solid #e6e9ee; border-radius:var(--radius); overflow:hidden;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
+  display:flex; flex-direction:column; background:#fff;
+}
+.card .media{
+  position:relative; aspect-ratio: 4/3; background:#eaeef3;
+  overflow:hidden;
+}
+.card .media img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform .4s ease;
+}
+.card:hover .media img{ transform:scale(1.04) }
+.card .badges{
+  position:absolute; top:10px; left:10px; display:flex; gap:8px; flex-wrap:wrap;
+}
+.b-instock{background:var(--stss-green); color:#fff}
+.b-new{background:#222; color:#fff}
+.b-sale{background:var(--accent); color:#111}
+.b-reserved{background:#6b7280;color:#fff}
+.b-sold{background:#b00020;color:#fff}
+
+.card .body{ padding:12px 14px 14px }
+.card h3{ margin:2px 0 4px; font-size:18px }
+.meta{ color:var(--muted); font-size:13px; margin-bottom:8px }
+.specs{ display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 10px }
+.chip{
+  background:var(--stss-gray); border:1px solid #e3e7eb; border-radius:999px;
+  padding:6px 10px; font-size:13px; color:#2b2f35;
+}
+
+.price{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin:6px 0 12px;
+  justify-content:flex-end;
+}
+.price .now{ font-size:20px; font-weight:700 }
+.price .was{ color:var(--muted); text-decoration:line-through }
+
+.cta{
+  display:flex;
+  gap:12px;
+  margin-top:auto;
+  padding:0 14px 14px;
+  align-items:stretch;
+}
+.cta .btn{
+  flex:1 1 auto;
+  text-align:center;
+  padding:10px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  border:1px solid #d9dee4;
+  background:#fff;
+  white-space:nowrap;
+}
+.cta .btn.primary{
+  background: var(--stss-blue);
+  color: #fff;
+  border-color: var(--stss-blue);
+}
+.cta .btn.primary:hover{ background:#195f9c; }
+
+@media (max-width: 420px){
+  .cta{ flex-direction: column; }
+  .cta .btn{ width: 100%; }
+}
+
+/* Filters */
+.filters{
+  background:#fff; border:1px solid #e6e9ee; border-radius:12px; padding:10px;
+  margin:8px 0 16px;
+}
+.filters form{ display:grid; gap:10px; grid-template-columns:repeat(2,1fr) }
+@media (min-width:900px){
+  .filters form{ grid-template-columns: repeat(6, 1fr) }
+}
+.filters label{ display:flex; flex-direction:column; gap:6px; font-size:13px; color:#333 }
+.filters input[type="number"],
+.filters select{
+  padding:9px 10px; border:1px solid #d9dee4; border-radius:10px; background:#fff
+}
+
+/* Pagination */
+.pagination{display:flex; gap:10px; justify-content:center; margin:20px 0}
+.pagination button{padding:9px 12px;border-radius:10px;border:1px solid #d9dee4;background:#fff;cursor:pointer}
+.pagination button.active{background:var(--stss-blue);color:#fff;border-color:var(--stss-blue)}
+.empty{padding:24px;text-align:center;color:var(--muted);background:var(--stss-gray);border-radius:12px}
+.note{color:var(--muted);font-size:12px;margin-top:8px}
+.err{color:var(--danger);font-weight:700}
+
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
+.modal{background:#fff;border-radius:14px;max-width:980px;width:92%;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.modal .mhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eef1f4}
+.modal .mbody{display:grid;grid-template-columns:1fr;gap:14px;padding:14px}
+@media(min-width:860px){.modal .mbody{grid-template-columns:1.2fr 1fr}}
+.modal .gallery{aspect-ratio:4/3;background:#eef2f6;border-radius:10px;overflow:hidden}
+.modal .gallery img{width:100%;height:100%;object-fit:cover}
+.modal .mclose{border:0;background:#fff;font-size:22px;cursor:pointer}
+
+.mcta{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.mcta a{ text-decoration:none }
+.mbtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 16px;
+  border-radius:10px;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer;
+  border:1px solid #d9dee4;
+  background:#fff;
+  color:#111;
+  min-width:180px;
+}
+.mbtn.primary{
+  background: var(--stss-blue);
+  color:#fff;
+  border-color: var(--stss-blue);
+}
+.mbtn.primary:hover{ background:#195f9c; }
+.mbtn.outline{
+  color: var(--stss-blue);
+  border-color:#d9dee4;
+}
+.mbtn.outline:hover{ background:#f4f6f8; }
+
+@media (max-width:520px){
+  .mcta{ flex-direction:column; }
+  .mbtn{ width:100%; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>ADU Inventory</h1>
+  <p class="sub">Live ADU inventory pulled from Google Sheets. Use search + filters to find the right build.</p>
+
+  <div class="toolbar">
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Search by title, SKU, size, beds/baths, location, or notes…" />
+      <button id="btnSearch" type="button">Search</button>
+    </div>
+    <div class="controls">
+      <select id="sort" class="select" aria-label="Sort">
+        <option value="price_asc">Sort: Price (Low → High)</option>
+        <option value="price_desc">Price: High → Low</option>
+        <option value="sqft_desc">Size: Largest → Smallest</option>
+        <option value="sqft_asc">Size: Smallest → Largest</option>
+      </select>
+      <button id="btnSync" class="button" type="button">Sync</button>
+      <button id="btnReset" class="button ghost" type="button">Reset</button>
+    </div>
+  </div>
+
+  <div class="filters">
+    <form id="filters">
+      <label>Size
+        <select name="size" id="fSize">
+          <option value="">Any</option>
+          <option value="estudio">estudio</option>
+          <option value="compacto">compacto</option>
+          <option value="pequeno">pequeno</option>
+          <option value="mediano">mediano</option>
+          <option value="grande">grande</option>
+        </select>
+      </label>
+
+      <label>Min Sq Ft
+        <input name="minSqft" type="number" placeholder="Min">
+      </label>
+
+      <label>Max Sq Ft
+        <input name="maxSqft" type="number" placeholder="Max">
+      </label>
+
+      <label>Bedrooms
+        <select name="beds" id="fBeds">
+          <option value="">Any</option>
+          <option value="0">0 bed</option>
+          <option value="1">1 bed</option>
+          <option value="2">2 bed</option>
+          <option value="3">3 bed</option>
+          <option value="4">4 bed</option>
+        </select>
+      </label>
+
+      <label>Bathrooms
+        <select name="baths" id="fBaths">
+          <option value="">Any</option>
+          <option value="1">1 bath</option>
+          <option value="2">2 bath</option>
+          <option value="3">3 bath</option>
+        </select>
+      </label>
+
+      <label>Width Min (ft)
+        <input name="minW" type="number" placeholder="Min">
+      </label>
+
+      <label>Length Min (ft)
+        <input name="minL" type="number" placeholder="Min">
+      </label>
+
+      <label>Max Price ($)
+        <input name="maxPrice" type="number" placeholder="e.g. 150000">
+      </label>
+
+      <label>Availability
+        <select name="status" id="fStatus">
+          <option value="">Any</option>
+          <option value="in stock">in stock</option>
+          <option value="build-to-order">build-to-order</option>
+          <option value="sold">sold</option>
+          <option value="on display">on display</option>
+        </select>
+      </label>
+
+      <label>Location
+        <select name="loc" id="fLoc">
+          <option value="">All</option>
+        </select>
+      </label>
+    </form>
+  </div>
+
+  <div id="msg" class="note"></div>
+  <div id="grid" class="grid" role="list"></div>
+  <div id="pager" class="pagination"></div>
+
+  <p class="note">
+    Pricing shown may exclude delivery, site prep/foundation, and applicable taxes/fees.
+  </p>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="mhead">
+      <h3 id="mtitle" style="margin:0;font-size:18px">ADU</h3>
+      <button class="mclose" onclick="closeModal()" aria-label="Close">×</button>
+    </div>
+    <div class="mbody">
+      <div class="gallery"><img id="mimg" alt=""></div>
+      <div>
+        <div class="meta" id="msku"></div>
+        <div class="specs" id="mspecs"></div>
+
+        <div class="price" id="mpriceWrap">
+          <span class="now" id="mprice"></span>
+          <span class="was" id="mwas"></span>
+        </div>
+
+        <div class="mcta">
+          <a id="mquote" class="mbtn primary" href="https://southtexassteelstuds.com/contact/" target="_top">Request a Quote</a>
+          <a id="mback" class="mbtn outline" href="#" onclick="closeModal(); return false;">Back to Listings</a>
+        </div>
+
+        <p class="note" id="mdesc"></p>
+        <div class="smallMuted" id="mnotes"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   1) GOOGLE SHEETS CSV (publish the ADU tab and use its gid)
+   ========================================================= */
+const GOOGLE_SHEETS_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vToQBXpgvNoKGYKw5iXFfkWLVhEhzQtv_Yn_21X0SBFM-CDLlnv-OSZLwzz3s1I9JstwAgyomaJ4fkH/pub?gid=1310723517&single=true&output=csv";
+
+
+/* =========================================================
+   2) STATE
+   ========================================================= */
+const grid = document.getElementById("grid");
+const pager = document.getElementById("pager");
+const q = document.getElementById("q");
+const sortSel = document.getElementById("sort");
+const filtersForm = document.getElementById("filters");
+const msg = document.getElementById("msg");
+
+const fLoc = document.getElementById("fLoc");
+const pageSize = 9;
+
+let aduData = [];
+let state = { page: 1, q: "", sort: sortSel.value, f: {} };
+
+/* =========================================================
+   3) HELPERS
+   ========================================================= */
+function money(n){
+  const num = Number(n);
+  if (!isFinite(num) || num <= 0) return "";
+  return "$" + num.toLocaleString();
+}
+function sizeStr(w,l){
+  const W = Number(w), L = Number(l);
+  if (!isFinite(W) || !isFinite(L) || W<=0 || L<=0) return "";
+  return `${W}×${L} ft`;
+}
+function normalizeYes(v){
+  const s = String(v ?? "").trim().toLowerCase();
+  return s === "yes" || s === "y" || s === "true" || s === "1";
+}
+function splitList(v){
+  return String(v ?? "")
+    .split(/[|,]/)
+    .map(x => x.trim())
+    .filter(Boolean);
+}
+function firstImage(images){
+  const arr = Array.isArray(images) ? images : splitList(images);
+  return arr[0] || "https://southtexassteelstuds.com/wp-content/uploads/2026/01/placeholder.png";
+}
+function uniqueSorted(values){
+  return Array.from(new Set(values.filter(v => String(v).trim() !== "")))
+    .sort((a,b)=>String(a).localeCompare(String(b)));
+}
+function rebuildSelect(selectEl, values, firstLabel){
+  const prev = selectEl.value;
+  selectEl.innerHTML =
+    `<option value="">${firstLabel}</option>` +
+    values.map(v => `<option value="${String(v)}">${String(v)}</option>`).join("");
+  const ok = Array.from(selectEl.options).some(o => o.value === prev);
+  selectEl.value = ok ? prev : "";
+}
+function badgeClass(b){
+  const s = String(b).toLowerCase();
+  if (s.includes("sale")) return "b-sale";
+  if (s.includes("sold")) return "b-sold";
+  if (s.includes("stock") || s.includes("in stock")) return "b-instock";
+  if (s.includes("display")) return "b-new";
+  return "b-new";
+}
+
+/* Robust CSV parser (handles quotes) */
+function parseCSV(text){
+  const rows = [];
+  let i = 0, field = "", row = [], inQuotes = false;
+
+  while (i < text.length){
+    const c = text[i];
+
+    if (inQuotes){
+      if (c === '"'){
+        if (text[i+1] === '"'){ field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      }
+      field += c; i++; continue;
+    } else {
+      if (c === '"'){ inQuotes = true; i++; continue; }
+      if (c === ","){ row.push(field); field=""; i++; continue; }
+      if (c === "\n"){ row.push(field); rows.push(row); field=""; row=[]; i++; continue; }
+      if (c === "\r"){ i++; continue; }
+      field += c; i++; continue;
+    }
+  }
+  row.push(field);
+  rows.push(row);
+  return rows.filter(r => r.some(x => String(x).trim() !== ""));
+}
+
+/* =========================================================
+   4) LOAD FROM GOOGLE SHEETS
+   ========================================================= */
+async function sync(){
+  msg.textContent = "Syncing…";
+  msg.classList.remove("err");
+
+  try{
+    if (!GOOGLE_SHEETS_CSV_URL || GOOGLE_SHEETS_CSV_URL.includes("PASTE_YOUR_ADU_TAB_CSV_URL_HERE")){
+      throw new Error("Missing CSV URL.");
+    }
+
+    const res = await fetch(GOOGLE_SHEETS_CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (rows.length < 2) throw new Error("CSV is empty.");
+
+    const header = rows[0].map(h => String(h).trim());
+    const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+
+    const I = {
+      SKU: idx("SKU"),
+      Title: idx("Title"),
+      Size: idx("Size"),
+      SqFt: idx("SqFt"),
+      Bedrooms: idx("Bedrooms"),
+      Bathrooms: idx("Bathrooms"),
+      Width: idx("Width"),
+      Length: idx("Length"),
+      Price: idx("Price"),
+      Sale: idx("Sale"),
+      Availability: idx("Availability"),
+      Location: idx("Location"),
+      Images: idx("Images"),
+      Badges: idx("Badges"),
+      Notes: idx("Notes"),
+      Added: idx("Added"),
+      Show: idx("Show")
+    };
+
+    aduData = rows.slice(1).map(r => {
+      const obj = {
+        id: I.SKU>-1 ? r[I.SKU] : "",
+        title: I.Title>-1 ? r[I.Title] : "",
+        size: I.Size>-1 ? String(r[I.Size]||"").trim().toLowerCase() : "",
+        sqft: I.SqFt>-1 ? Number(String(r[I.SqFt]).replace(/[^0-9.]/g,"")) : null,
+        beds: I.Bedrooms>-1 ? Number(String(r[I.Bedrooms]).replace(/[^0-9]/g,"")) : null,
+        baths: I.Bathrooms>-1 ? Number(String(r[I.Bathrooms]).replace(/[^0-9]/g,"")) : null,
+        width: I.Width>-1 ? Number(String(r[I.Width]).replace(/[^0-9.]/g,"")) : null,
+        length: I.Length>-1 ? Number(String(r[I.Length]).replace(/[^0-9.]/g,"")) : null,
+        price: I.Price>-1 ? Number(String(r[I.Price]).replace(/[^0-9.]/g,"")) : null,
+        sale: I.Sale>-1 ? Number(String(r[I.Sale]).replace(/[^0-9.]/g,"")) : null,
+        status: I.Availability>-1 ? String(r[I.Availability]||"").trim().toLowerCase() : "",
+        location: I.Location>-1 ? r[I.Location] : "",
+        images: I.Images>-1 ? splitList(r[I.Images]) : [],
+        badges: I.Badges>-1 ? splitList(r[I.Badges]) : [],
+        notes: I.Notes>-1 ? r[I.Notes] : "",
+        added: I.Added>-1 ? r[I.Added] : "",
+        show: I.Show>-1 ? r[I.Show] : "Yes"
+      };
+
+      if (!isFinite(obj.price)) obj.price = null;
+      if (!isFinite(obj.sale)) obj.sale = null;
+      if (!isFinite(obj.sqft)) obj.sqft = null;
+      if (!isFinite(obj.beds)) obj.beds = null;
+      if (!isFinite(obj.baths)) obj.baths = null;
+      if (!isFinite(obj.width)) obj.width = null;
+      if (!isFinite(obj.length)) obj.length = null;
+
+      return obj;
+    }).filter(x => normalizeYes(x.show));
+
+    rebuildSelect(fLoc, uniqueSorted(aduData.map(x=>x.location)), "All");
+
+    msg.textContent = `Synced ${aduData.length} ADU(s).`;
+    state.page = 1;
+    render();
+  }catch(e){
+    msg.textContent = "Sync failed: confirm the ADU tab is Published to web and the CSV URL opens in a browser.";
+    msg.classList.add("err");
+    grid.innerHTML = `<div class="empty">Unable to load ADUs.</div>`;
+    pager.innerHTML = "";
+  }
+}
+
+/* =========================================================
+   5) FILTERING + SORTING + RENDER
+   ========================================================= */
+function applyAll(data){
+  let a = [...data];
+
+  const term = state.q.trim().toLowerCase();
+  if (term){
+    a = a.filter(x =>
+      `${x.title} ${x.id} ${x.size} ${x.sqft} ${x.beds} ${x.baths} ${x.width} ${x.length} ${x.location} ${x.status} ${x.notes}`
+        .toLowerCase().includes(term)
+    );
+  }
+
+  const f = state.f;
+  const effectivePrice = (x) => (x.sale && x.sale > 0) ? x.sale : (x.price || 0);
+
+  if (f.size) a = a.filter(x => (x.size || "") === String(f.size).toLowerCase());
+
+  if (f.minSqft){
+    const min = Number(f.minSqft);
+    a = a.filter(x => isFinite(x.sqft) ? x.sqft >= min : true);
+  }
+  if (f.maxSqft){
+    const max = Number(f.maxSqft);
+    a = a.filter(x => isFinite(x.sqft) ? x.sqft <= max : true);
+  }
+
+  if (f.beds !== "" && f.beds != null){
+    const b = Number(f.beds);
+    a = a.filter(x => isFinite(x.beds) ? x.beds === b : false);
+  }
+
+  if (f.baths !== "" && f.baths != null){
+    const b = Number(f.baths);
+    a = a.filter(x => isFinite(x.baths) ? x.baths === b : false);
+  }
+
+  if (f.minW){
+    const mw = Number(f.minW);
+    a = a.filter(x => isFinite(x.width) ? x.width >= mw : true);
+  }
+  if (f.minL){
+    const ml = Number(f.minL);
+    a = a.filter(x => isFinite(x.length) ? x.length >= ml : true);
+  }
+
+  if (f.maxPrice){
+    const cap = Number(f.maxPrice);
+    a = a.filter(x => {
+      const p = effectivePrice(x);
+      return isFinite(p) ? p <= cap : true;
+    });
+  }
+
+  if (f.status) a = a.filter(x => (x.status || "") === String(f.status).toLowerCase());
+  if (f.loc) a = a.filter(x => x.location === f.loc);
+
+  // sort
+  const s = state.sort;
+  const byPrice = (x)=> effectivePrice(x);
+  const bySqft  = (x)=> x.sqft || 0;
+
+  if (s === "price_asc") a.sort((x,y)=>byPrice(x)-byPrice(y));
+  if (s === "price_desc") a.sort((x,y)=>byPrice(y)-byPrice(x));
+  if (s === "sqft_asc") a.sort((x,y)=>bySqft(x)-bySqft(y));
+  if (s === "sqft_desc") a.sort((x,y)=>bySqft(y)-bySqft(x));
+
+  return a;
+}
+
+function cardHTML(x){
+  // Use status as a badge automatically + any extra badges from sheet
+  const badgeList = [];
+  if (x.status) badgeList.push(x.status);
+  (x.badges || []).forEach(b => badgeList.push(b));
+  if (x.sale && x.sale > 0) badgeList.unshift("Sale");
+
+  const tags = badgeList.slice(0,4).map(b =>
+    `<span class="badge ${badgeClass(b)}">${escapeHtml(b)}</span>`
+  ).join("");
+
+  const sqftChip = isFinite(x.sqft) ? `<span class="chip">${escapeHtml(x.sqft)} sq ft</span>` : "";
+  const bedsBaths = (isFinite(x.beds) || isFinite(x.baths))
+    ? `<span class="chip">${isFinite(x.beds)?x.beds:"?"} bd • ${isFinite(x.baths)?x.baths:"?"} ba</span>`
+    : "";
+  const dims = sizeStr(x.width,x.length) ? `<span class="chip">${escapeHtml(sizeStr(x.width,x.length))}</span>` : "";
+  const sizeCat = x.size ? `<span class="chip">${escapeHtml(x.size)}</span>` : "";
+  const loc = x.location ? `<span class="chip">${escapeHtml(x.location)}</span>` : "";
+
+  const now = (x.sale && x.sale > 0) ? x.sale : x.price;
+  const was = (x.sale && x.sale > 0 && x.price && x.price > x.sale)
+    ? `<span class="was">${money(x.price)}</span>`
+    : "";
+
+  return `
+  <article class="card" role="listitem">
+    <div class="media" onclick='openModal("${escapeHtmlAttr(x.id)}")' style="cursor:pointer">
+      <img src="${escapeHtmlAttr(firstImage(x.images))}" alt="${escapeHtmlAttr(x.title || x.id)}">
+      <div class="badges">${tags}</div>
+    </div>
+
+    <div class="body">
+      <h3>${escapeHtml(x.title || x.id || "ADU")}</h3>
+      <div class="meta">SKU ${escapeHtml(x.id || "")}${x.size ? ` • ${escapeHtml(x.size)}` : ""}</div>
+
+      <div class="specs">
+        ${sizeCat}
+        ${sqftChip}
+        ${bedsBaths}
+        ${dims}
+        ${loc}
+      </div>
+
+      <div class="price">
+        <span class="now">${money(now) || ""}</span>
+        ${was}
+      </div>
+    </div>
+
+    <div class="cta">
+      <button class="btn primary" type="button" onclick='openModal("${escapeHtmlAttr(x.id)}")'>Details</button>
+      <a class="btn" href="https://southtexassteelstuds.com/contact/" target="_top" style="text-decoration:none;display:flex;align-items:center;justify-content:center;">Request Quote</a>
+    </div>
+  </article>`;
+}
+
+function render(){
+  const items = applyAll(aduData);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+  state.page = Math.min(state.page, totalPages);
+  const start = (state.page - 1) * pageSize;
+  const slice = items.slice(start, start + pageSize);
+
+  grid.innerHTML = slice.length
+    ? slice.map(cardHTML).join("")
+    : `<div class="empty">No results. Try clearing filters.</div>`;
+
+  pager.innerHTML = Array.from({length: totalPages}, (_,i)=>i+1).map(n =>
+    `<button class="${n===state.page?'active':''}" onclick="gotoPage(${n})">${n}</button>`
+  ).join("");
+}
+
+/* =========================================================
+   6) MODAL
+   ========================================================= */
+function openModal(id){
+  const x = aduData.find(i => String(i.id) === String(id));
+  if (!x) return;
+
+  document.getElementById("mtitle").textContent = x.title || "ADU";
+  document.getElementById("mimg").src = firstImage(x.images);
+
+  const metaLine = [
+    x.id ? `SKU ${x.id}` : "",
+    x.location || ""
+  ].filter(Boolean).join(" • ");
+  document.getElementById("msku").textContent = metaLine;
+
+  const specs = [];
+  if (x.size) specs.push(`<span class="chip">${escapeHtml(x.size)}</span>`);
+  if (isFinite(x.sqft)) specs.push(`<span class="chip">${escapeHtml(x.sqft)} sq ft</span>`);
+  if (isFinite(x.beds) || isFinite(x.baths)) specs.push(`<span class="chip">${isFinite(x.beds)?x.beds:"?"} bd • ${isFinite(x.baths)?x.baths:"?"} ba</span>`);
+  if (sizeStr(x.width,x.length)) specs.push(`<span class="chip">${escapeHtml(sizeStr(x.width,x.length))}</span>`);
+  if (x.status) specs.push(`<span class="chip">${escapeHtml(x.status)}</span>`);
+  document.getElementById("mspecs").innerHTML = specs.join("");
+
+  const now = (x.sale && x.sale > 0) ? x.sale : x.price;
+  const was = (x.sale && x.sale > 0 && x.price && x.price > x.sale) ? money(x.price) : "";
+
+  document.getElementById("mprice").textContent = money(now) || "";
+  document.getElementById("mwas").textContent = was;
+
+  document.getElementById("mdesc").textContent = x.notes ? x.notes : "";
+  document.getElementById("mnotes").textContent = x.notes ? "" : " ";
+
+  document.getElementById("modal").style.display = "flex";
+}
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+}
+window.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+function gotoPage(n){ state.page = n; render(); }
+
+/* =========================================================
+   7) EVENTS
+   ========================================================= */
+document.getElementById("btnSearch").onclick = () => {
+  state.q = q.value;
+  state.page = 1;
+  render();
+};
+q.addEventListener("keydown", e => {
+  if (e.key === "Enter"){
+    state.q = q.value;
+    state.page = 1;
+    render();
+  }
+});
+sortSel.onchange = () => { state.sort = sortSel.value; render(); };
+
+filtersForm.addEventListener("change", () => {
+  const fd = new FormData(filtersForm);
+  state.f = Object.fromEntries(fd.entries());
+  state.page = 1;
+  render();
+});
+
+document.getElementById("btnReset").onclick = () => {
+  q.value = "";
+  state.q = "";
+  filtersForm.reset();
+  state.f = {};
+  state.page = 1;
+  sortSel.value = "price_asc";
+  state.sort = "price_asc";
+  render();
+};
+
+document.getElementById("btnSync").onclick = sync;
+document.getElementById("modal").addEventListener("click", (e)=>{
+  if (e.target && e.target.id === "modal") closeModal();
+});
+
+/* =========================================================
+   8) SAFETY: escape helpers
+   ========================================================= */
+function escapeHtml(str){
+  return String(str ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
+}
+function escapeHtmlAttr(str){
+  return escapeHtml(str).replaceAll("`","&#96;");
+}
+
+/* init */
+sync();
+</script>
+</body>
+</html>
