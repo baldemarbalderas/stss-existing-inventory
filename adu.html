@@ -519,7 +519,12 @@ async function sync(){
     if (rows.length < 2) throw new Error("CSV is empty.");
 
     const header = rows[0].map(h => String(h).trim());
-    const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
+const idx = (name) => {
+  const want = String(name).replace(/\s+/g, "").toLowerCase();
+  return header.findIndex(h =>
+    String(h).replace(/\s+/g, "").toLowerCase() === want
+  );
+};
 
     const I = {
       SKU: idx("SKU"),
@@ -668,7 +673,7 @@ function cardHTML(x){
     `<span class="badge ${badgeClass(b)}">${escapeHtml(b)}</span>`
   ).join("");
 
-  const sqftChip = isFinite(x.sqft) ? `<span class="chip">${escapeHtml(x.sqft)} sq ft</span>` : "";
+  const sqftChip = (Number.isFinite(x.sqft) && x.sqft > 0)   ? `<span class="chip">${escapeHtml(x.sqft)} sq ft</span>`   : "";
   const bedsBaths = (isFinite(x.beds) || isFinite(x.baths))
     ? `<span class="chip">${isFinite(x.beds)?x.beds:"?"} bd • ${isFinite(x.baths)?x.baths:"?"} ba</span>`
     : "";
