@@ -242,6 +242,14 @@ body.modal-open{
 }
 
 .smallMuted{color:var(--muted);font-size:12px;margin-top:10px}
+
+  #mdesc{
+  font-size:14px;
+  line-height:1.5;
+  color:#2b2f35;
+  margin-top:12px;
+}
+
 </style>
 </head>
 
@@ -761,9 +769,14 @@ function openModal(id){
   document.getElementById("mprice").textContent = money(now) || "";
   document.getElementById("mwas").textContent = was;
 
-  // notes
-  document.getElementById("mdesc").textContent = x.notes ? x.notes : "";
-  document.getElementById("mnotes").textContent = "";
+// Notes Short description (modal)
+const desc = (x.notes || "").trim();
+
+// keep it short and readable
+document.getElementById("mdesc").textContent =
+  desc.length > 160 ? desc.slice(0, 157) + "…" : desc;
+
+document.getElementById("mnotes").textContent = "";
 
   // reset lender dropdown
   document.getElementById("finSel").value = "";
