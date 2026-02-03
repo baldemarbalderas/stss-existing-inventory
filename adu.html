@@ -241,6 +241,20 @@ body.modal-open{
   .mbtn{ width:100%; }
 }
 
+  .modal-financing{
+  margin-top: 18px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* space between label and dropdown */
+  max-width: 360px; /* matches button group width visually */
+}
+
+.modal-financing select{
+  width: 100%;
+}
+
+
 .smallMuted{color:var(--muted);font-size:12px;margin-top:10px}
 
   #mdesc{
@@ -280,7 +294,7 @@ body.modal-open{
           <option value="">Any</option>
           <option value="Estudio">Estudio</option>
           <option value="Compacto">Compacto</option>
-          <option value="Pequeno">Pequeno</option>
+          <option value="Pequeño">Pequeño</option>
           <option value="Mediano">Mediano</option>
           <option value="Grande">Grande</option>
         </select>
@@ -376,15 +390,15 @@ body.modal-open{
 <!-- DESCRIPTION -->
         <p id="mdesc"></p>
 
-        <div class="financing" style="margin-top:10px">
-          <label for="finSel">Apply for Financing:</label>
-          <select id="finSel" onchange="goFinance(this.value)">
-            <option value="">Choose a lender…</option>
-            <option value="acorn">Acorn Finance</option>
-            <option value="hfs">HFS Financial</option>
-            <option value="hearth">Hearth</option>
-          </select>
-        </div>
+<div class="financing modal-financing">
+  <label for="finSel">Apply for Financing:</label>
+  <select id="finSel" onchange="goFinance(this.value)">
+    <option value="">Choose a lender…</option>
+    <option value="acorn">Acorn Finance</option>
+    <option value="hfs">HFS Financial</option>
+    <option value="hearth">Hearth</option>
+  </select>
+</div>
 
         <div class="mcta">
           <a class="mbtn primary" href="https://southtexassteelstuds.com/contact/" target="_top">Request a Quote</a>
