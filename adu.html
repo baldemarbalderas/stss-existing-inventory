@@ -545,7 +545,7 @@ async function sync(){
       const obj = {
         id: I.SKU>-1 ? r[I.SKU] : "",
         title: I.Title>-1 ? r[I.Title] : "",
-        size: I.Size>-1 ? String(r[I.Size]||"").trim().toLowerCase() : "",
+        size: I.Size>-1 ? String(r[I.Size]||"").trim() : "",
         sqft: I.SqFt>-1 ? Number(String(r[I.SqFt]).replace(/[^0-9.]/g,"")) : null,
         beds: I.Bedrooms>-1 ? Number(String(r[I.Bedrooms]).replace(/[^0-9]/g,"")) : null,
         baths: I.Bathrooms>-1 ? Number(String(r[I.Bathrooms]).replace(/[^0-9]/g,"")) : null,
@@ -553,7 +553,7 @@ async function sync(){
         length: I.Length>-1 ? Number(String(r[I.Length]).replace(/[^0-9.]/g,"")) : null,
         price: I.Price>-1 ? Number(String(r[I.Price]).replace(/[^0-9.]/g,"")) : null,
         sale: I.Sale>-1 ? Number(String(r[I.Sale]).replace(/[^0-9.]/g,"")) : null,
-        status: I.Availability>-1 ? String(r[I.Availability]||"").trim().toLowerCase() : "",
+        status: I.Availability>-1 ? String(r[I.Availability]||"").trim() : "",
         location: I.Location>-1 ? r[I.Location] : "",
         images: I.Images>-1 ? splitList(r[I.Images]) : [],
         badges: I.Badges>-1 ? splitList(r[I.Badges]) : [],
@@ -603,7 +603,7 @@ function applyAll(data){
   const f = state.f;
   const effectivePrice = (x) => (x.sale && x.sale > 0) ? x.sale : (x.price || 0);
 
-  if (f.size) a = a.filter(x => (x.size || "") === String(f.size).toLowerCase());
+  if (f.size) a = a.filter(x => String(x.size||"").toLowerCase() === String(f.size).toLowerCase());
 
   if (f.minSqft){
     const min = Number(f.minSqft);
@@ -641,7 +641,7 @@ function applyAll(data){
     });
   }
 
-  if (f.status) a = a.filter(x => (x.status || "") === String(f.status).toLowerCase());
+  if (f.status) a = a.filter(x => String(x.status||"").toLowerCase() === String(f.status).toLowerCase());
   if (f.loc) a = a.filter(x => x.location === f.loc);
 
   // sort
