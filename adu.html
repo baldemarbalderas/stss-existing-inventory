@@ -733,48 +733,58 @@ function openModal(id){
   const x = aduData.find(i => String(i.id) === String(id));
   if (!x) return;
 
+  // title + image
+  document.getElementById("mtitle").textContent = x.title || "ADU";
+  document.getElementById("mimg").src = firstImage(x.images);
 
-  document.getElementById("modal").style.display = "flex";
-  document.body.classList.add("modal-open");
-}
-
+  // meta line
   const metaLine = [
     x.id ? `SKU ${x.id}` : "",
     x.location || ""
   ].filter(Boolean).join(" • ");
   document.getElementById("msku").textContent = metaLine;
 
+  // specs chips
   const specs = [];
   if (x.size) specs.push(`<span class="chip">${escapeHtml(x.size)}</span>`);
   if (isFinite(x.sqft)) specs.push(`<span class="chip">${escapeHtml(x.sqft)} sq ft</span>`);
-  if (isFinite(x.beds) || isFinite(x.baths)) specs.push(`<span class="chip">${isFinite(x.beds)?x.beds:"?"} bd • ${isFinite(x.baths)?x.baths:"?"} ba</span>`);
+  if (isFinite(x.beds) || isFinite(x.baths)) {
+    specs.push(`<span class="chip">${isFinite(x.beds)?x.beds:"?"} bd • ${isFinite(x.baths)?x.baths:"?"} ba</span>`);
+  }
   if (sizeStr(x.width,x.length)) specs.push(`<span class="chip">${escapeHtml(sizeStr(x.width,x.length))}</span>`);
   if (x.status) specs.push(`<span class="chip">${escapeHtml(x.status)}</span>`);
   document.getElementById("mspecs").innerHTML = specs.join("");
 
+  // price + sale
   const now = (x.sale && x.sale > 0) ? x.sale : x.price;
   const was = (x.sale && x.sale > 0 && x.price && x.price > x.sale) ? money(x.price) : "";
   document.getElementById("mprice").textContent = money(now) || "";
   document.getElementById("mwas").textContent = was;
 
+  // notes
   document.getElementById("mdesc").textContent = x.notes ? x.notes : "";
-  document.getElementById("mnotes").textContent = x.notes ? "" : " ";
+  document.getElementById("mnotes").textContent = "";
 
   // reset lender dropdown
   document.getElementById("finSel").value = "";
 
+  // show modal + lock background scroll (keeps user at same scroll position)
   document.getElementById("modal").style.display = "flex";
+  document.body.classList.add("modal-open");
 }
 
 function closeModal(){
   document.getElementById("modal").style.display = "none";
   document.body.classList.remove("modal-open");
 }
+
 window.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
 function gotoPage(n){
   state.page = n;
   render();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  // NOTE: I removed the forced scroll-to-top so users stay where they are browsing.
+  // If you want it back, we can add it optionally.
 }
 
 function goFinance(which){
