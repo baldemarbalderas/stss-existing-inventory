@@ -264,6 +264,26 @@ body.modal-open{
   margin-top:12px;
 }
 
+  /* Modal financing layout fix */
+#modalFinancing{
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;              /* space between label and dropdown */
+  max-width: 420px;       /* aligns with button group */
+}
+
+#modalFinancing select{
+  width: 100%;
+}
+
+/* Match button row width to dropdown */
+#modal .mcta{
+  max-width: 420px;
+}
+
+
 </style>
 </head>
 
@@ -727,7 +747,7 @@ function cardHTML(x){
 
     <div class="cta">
       <button class="btn primary" type="button" onclick='openModal("${escapeHtmlAttr(x.id)}")'>Details</button>
-      <div class="financing">
+      <div class="financing" id="modalFinancing">
         <select onchange="goFinance(this.value); this.value='';">
           <option value="">Financing</option>
           <option value="acorn">Acorn</option>
