@@ -367,11 +367,13 @@ body.modal-open{
         <div class="meta" id="msku"></div>
         <div class="specs" id="mspecs"></div>
 
-        <div class="price" id="mpriceWrap">
-          <span class="now" id="mprice"></span>
-          <span class="was" id="mwas"></span>
-        </div>
-
+<!-- PRICE -->
+<div class="price" id="mpriceWrap">
+  <span class="now" id="mprice"></span>
+  <span class="was" id="mwas"></span>
+</div>
+        
+<!-- DESCRIPTION -->
         <p id="mdesc"></p>
 
         <div class="financing" style="margin-top:10px">
@@ -771,11 +773,7 @@ function openModal(id){
   document.getElementById("mwas").textContent = was;
 
 // Notes Short description (modal)
-const desc = (x.notes || "").trim();
-
-// keep it short and readable
-document.getElementById("mdesc").textContent =
-  desc.length > 160 ? desc.slice(0, 157) + "…" : desc;
+document.getElementById("mdesc").textContent = (x.notes || "").trim();
 
 document.getElementById("mnotes").textContent = "";
 
