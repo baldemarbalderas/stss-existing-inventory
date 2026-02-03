@@ -852,22 +852,5 @@ function escapeHtmlAttr(str){
 sync();
 </script>
 
-  <script>
-function sendHeight(){
-  const height = document.documentElement.scrollHeight;
-  window.parent.postMessage(
-    { type: "resize-adu-iframe", height },
-    "*"
-  );
-}
-
-window.addEventListener("load", sendHeight);
-window.addEventListener("resize", sendHeight);
-
-// also resend after dynamic changes (pagination, filters)
-const observer = new MutationObserver(sendHeight);
-observer.observe(document.body, { childList: true, subtree: true });
-</script>
-
 </body>
 </html>
