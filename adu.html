@@ -388,20 +388,39 @@ body.modal-open{
 }
 
 
-/* =========================
-   FILTER COLLAPSE (MOBILE)
-   ========================= */
+/* FILTER DROPDOWN BASE */
 .filterDetails summary{
   cursor:pointer;
   list-style:none;
   font-weight:800;
-  padding:10px 6px;
+  padding:12px 8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
+  
+/* remove default marker */
 .filterDetails summary::-webkit-details-marker{ display:none; }
-
+  
+/* arrow indicator */
+.filterDetails summary::after{
+  content:"▾";
+  font-size:16px;
+  transition:transform .25s ease;
+}
+  
+  /* rotate arrow when open */
+.filterDetails[open] summary::after{
+  transform:rotate(180deg);
+}
+  
+/* MOBILE ONLY */
 @media (max-width: 680px){
   .filters{ padding:10px 12px; }
-  .filters form{ grid-template-columns:repeat(2,1fr); }
+  .filters form{
+    grid-template-columns:repeat(2,1fr);
+    margin-top:10px;
+  }
 }
 
   /* =========================
@@ -439,6 +458,17 @@ body.modal-open{
   /* Hide description on mobile (modal) */
 @media (max-width: 680px){
   #mdesc{ display:none; }
+}
+
+  /* DESKTOP: always show filters, hide dropdown UI */
+@media (min-width: 681px){
+  .filterDetails{
+    display:block;
+  }
+  .filterDetails > summary{
+    display:none;
+  }
+  .filterDetails[open]{ }
 }
 
 </style>
@@ -1059,6 +1089,19 @@ function escapeHtml(str){
 function escapeHtmlAttr(str){
   return escapeHtml(str).replaceAll("`","&#96;");
 }
+
+  const filterDetails = document.querySelector(".filterDetails");
+
+if (filterDetails) {
+  // close by default on mobile
+  if (window.matchMedia("(max-width: 680px)").matches) {
+    filterDetails.removeAttribute("open");
+  } else {
+    // always open on desktop
+    filterDetails.setAttribute("open", "");
+  }
+}
+
 
 /* init */
 sync();
