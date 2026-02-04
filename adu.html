@@ -264,6 +264,170 @@ body.modal-open{
   margin-top:12px;
 }
 
+  /* =========================
+   MOBILE FIXES (CARDS)
+   ========================= */
+@media (max-width: 520px){
+
+  .container{ padding:14px 12px; }
+
+  .grid{ gap:12px; }
+
+  .card{ border-radius:16px; }
+
+  .card .body{ padding:12px; }
+
+  .card h3{ font-size:20px; margin:4px 0 6px; }
+
+  /* meta line readability */
+  .meta{ font-size:13px; line-height:1.35; }
+
+  /* chips: tighter + wrap nicely */
+  .specs{ gap:8px; margin:10px 0 12px; }
+  .chip{
+    padding:7px 10px;
+    font-size:13px;
+  }
+
+  /* price: align left on mobile so it’s visible/expected */
+  .price{
+    justify-content:flex-start;
+    margin:8px 0 10px;
+  }
+  .price .now{ font-size:18px; }
+
+  /* CTA: always stacked + same width */
+  .cta{
+    flex-direction:column;
+    gap:10px;
+    padding:0 12px 12px;
+  }
+  .cta .btn{
+    width:100%;
+    padding:12px 14px;
+    font-size:15px;
+  }
+
+  .financing select{
+    padding:12px 14px;
+    font-size:15px;
+  }
+
+  /* badges: keep them from covering too much */
+  .card .badges{ top:8px; left:8px; gap:6px; }
+  .badge{ font-size:12px; padding:5px 9px; }
+}
+
+  /* =========================
+   MOBILE FIXES (MODAL)
+   ========================= */
+@media (max-width: 680px){
+
+  .modal-backdrop{
+    align-items:stretch;
+    justify-content:stretch;
+    padding:0;
+  }
+
+  .modal{
+    width:100%;
+    max-width:none;
+    height:100vh;
+    max-height:100vh;
+    border-radius:0;
+    overflow:auto;
+  }
+
+  .modal .mhead{
+    position:sticky;
+    top:0;
+    background:#fff;
+    z-index:2;
+  }
+
+  .modal .mbody{
+    grid-template-columns:1fr;
+    gap:12px;
+    padding:12px;
+  }
+
+  .modal .gallery{
+    aspect-ratio: 4/3;
+  }
+
+  /* make buttons stack nicely */
+  .mcta{
+    flex-direction:column;
+    gap:10px;
+  }
+  .mbtn{
+    width:100%;
+    min-width:0;
+  }
+
+  /* keep financing aligned and full width */
+  .modal-financing{
+    max-width:none;
+    width:100%;
+  }
+}
+
+  /* =========================
+   FILTER COLLAPSE (MOBILE)
+   ========================= */
+.filterDetails summary{
+  cursor:pointer;
+  list-style:none;
+  font-weight:800;
+  padding:10px 6px;
+}
+.filterDetails summary::-webkit-details-marker{ display:none; }
+
+@media (max-width: 680px){
+  .filters{ padding:10px 12px; }
+  .filters form{ grid-template-columns:repeat(2,1fr); }
+}
+
+/* =========================
+   FILTER COLLAPSE (MOBILE)
+   ========================= */
+.filterDetails summary{
+  cursor:pointer;
+  list-style:none;
+  font-weight:800;
+  padding:10px 6px;
+}
+.filterDetails summary::-webkit-details-marker{ display:none; }
+
+@media (max-width: 680px){
+  .filters{ padding:10px 12px; }
+  .filters form{ grid-template-columns:repeat(2,1fr); }
+}
+
+  /* =========================
+   TOOLBAR MOBILE TWEAKS
+   ========================= */
+@media (max-width: 680px){
+  .toolbar{ gap:10px; }
+
+  .controls{
+    justify-content:space-between;
+    gap:8px;
+  }
+
+  .select{ width:100%; }
+  #sort{ flex:1 1 auto; min-width:0; }
+
+  #btnSync, #btnReset{
+    padding:10px 12px;
+  }
+
+  .searchbar button{
+    padding:10px 12px;
+    white-space:nowrap;
+  }
+}
+
 </style>
 </head>
 
@@ -287,7 +451,10 @@ body.modal-open{
     </div>
   </div>
 
-  <div class="filters">
+<div class="filters">
+  <details class="filterDetails">
+    <summary class="filterSummary">Filters</summary>
+    
     <form id="filters">
       <label>Size
         <select name="size" id="fSize">
@@ -356,7 +523,8 @@ body.modal-open{
         </select>
       </label>
     </form>
-  </div>
+  </details>
+</div>
 
   <div id="msg" class="note"></div>
   <div id="grid" class="grid" role="list"></div>
