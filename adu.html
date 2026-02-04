@@ -384,9 +384,9 @@ body.modal-open{
 .filterDetails summary::-webkit-details-marker{ display:none; }
 
 @media (max-width: 680px){
-  .filters{ padding:10px 12px; }
-  .filters form{ grid-template-columns:repeat(2,1fr); }
+  .filterDetails[open] form{ margin-top: 10px; }
 }
+
 
 /* =========================
    FILTER COLLAPSE (MOBILE)
@@ -428,6 +428,14 @@ body.modal-open{
   }
 }
 
+  @media (max-width: 680px){
+  .filterDetails{ }
+  .filterDetails:not([open]) form{ margin-top: 10px; }
+}
+@media (min-width: 681px){
+  .filterDetails > summary{ display:none; }
+}
+
 </style>
 </head>
 
@@ -452,7 +460,7 @@ body.modal-open{
   </div>
 
 <div class="filters">
-  <details class="filterDetails">
+  <details class="filterDetails" open>
     <summary class="filterSummary">Filters</summary>
     
     <form id="filters">
