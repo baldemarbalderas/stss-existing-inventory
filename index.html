@@ -211,6 +211,42 @@ body{
 .actions .financingSelect{
   width: 100%;
 }
+    /* Pagination */
+.pager{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin: 8px 0 14px;
+  flex-wrap:wrap;
+}
+.pager .left{
+  color: var(--muted);
+  font-size: 13px;
+}
+.pager .buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pager button{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  font-weight:900;
+  font-size:13px;
+}
+.pager button.primary{
+  background: var(--primary);
+  color:#fff;
+  border:none;
+}
+.pager button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
 
   </style>
 </head>
@@ -273,10 +309,17 @@ body{
         <div class="resultsBar">
           <div class="count" id="count">Loading…</div>
         </div>
+
+        <div class="pager" id="pager" style="display:none;">
+  <div class="left" id="pageInfo"></div>
+  <div class="buttons" id="pageBtns"></div>
+</div>
+        
         <div class="grid" id="grid"></div>
       </main>
     </div>
   </div>
+
 
   <script>
     // ✅ Your live CSV URL (converted from pubhtml)
@@ -371,63 +414,143 @@ function goFinance(val){
       return rows.filter(r => r.some(x => String(x).trim() !== ''));
     }
 
-    function render(list){
-      count.textContent = `Showing ${list.length} result${list.length===1?'':'s'}`;
+const PAGE_SIZE = 9;
+let currentPage = 1;
+let lastList = [];
 
-      grid.innerHTML = list.map(x => {
-        const w = num(x.width) ?? 0;
-        const l = num(x.length) ?? 0;
-        const area = w*l;
+const pager = $('pager');
+const pageInfo = $('pageInfo');
+const pageBtns = $('pageBtns');
 
-        const sale = num(x.sale);
-        const price = num(x.price);
-        const p = priceToUse(x);
+function render(list){
+  // store the latest filtered/sorted list
+  lastList = list.slice();
 
-        const img = splitImages(x.images)[0] || 'https://southtexassteelstuds.com/wp-content/uploads/2026/01/placeholder.png';
-        const badges = String(x.badges ?? '').split('|').map(t=>t.trim()).filter(Boolean);
+  const total = lastList.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-        return `
-          <div class="card">
-            <img src="${img}" alt="">
-            <div class="b">
-              <h3 class="name">${x.title || x.sku || 'Inventory Item'}</h3>
-              <div class="meta">${x.sku || ''}${x.type ? ' · '+x.type : ''}${x.roof ? ' · '+x.roof : ''}${w&&l ? ` · ${w}×${l} (${area} sf)` : ''}</div>
+  // keep currentPage in bounds
+  if(currentPage > totalPages) currentPage = totalPages;
+  if(currentPage < 1) currentPage = 1;
 
-              <div class="tags">
-                ${x.location ? `<span class="tag">${x.location}</span>` : ''}
-                ${x.availability ? `<span class="tag">${x.availability}</span>` : ''}
-                ${x.color ? `<span class="tag">${x.color}</span>` : ''}
-                ${badges.slice(0,3).map(b=>`<span class="tag">${b}</span>`).join('')}
-              </div>
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const pageItems = lastList.slice(start, end);
 
-              <div class="priceRow">
-                <div class="price">$${Number(p).toLocaleString()}</div>
-                ${(sale !== null && sale > 0 && price !== null && price > sale) ? `<div class="strike">$${Number(price).toLocaleString()}</div>` : ''}
-              </div>
+  count.textContent = `Showing ${total} result${total===1?'':'s'}`;
 
-<div class="actions">
-  <div class="financeWrap" onclick="event.stopPropagation();">
-    <select
-      class="financingSelect"
-      onchange="goFinance(this.value); this.value='';"
-    >
-      <option value="">Financing</option>
-      <option value="acorn">Acorn</option>
-      <option value="hfs">HFS</option>
-      <option value="hearth">Hearth</option>
-    </select>
-  </div>
-</div>
+  // Pager UI
+  if(total > PAGE_SIZE){
+    pager.style.display = '';
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages} • Showing ${start + 1}-${Math.min(end, total)} of ${total}`;
 
+    const makeBtn = (label, onClick, opts={}) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      if(opts.primary) b.classList.add('primary');
+      if(opts.disabled) b.disabled = true;
+      b.addEventListener('click', onClick);
+      return b;
+    };
 
+    pageBtns.innerHTML = '';
+
+    pageBtns.appendChild(
+      makeBtn('Prev', () => { currentPage--; render(lastList); }, { disabled: currentPage === 1 })
+    );
+
+    // page numbers (compact)
+    // show: 1 ... (p-1) p (p+1) ... last
+    const pages = [];
+    pages.push(1);
+    if(currentPage - 1 > 1) pages.push(currentPage - 1);
+    if(currentPage !== 1 && currentPage !== totalPages) pages.push(currentPage);
+    if(currentPage + 1 < totalPages) pages.push(currentPage + 1);
+    if(totalPages > 1) pages.push(totalPages);
+
+    const uniqPages = Array.from(new Set(pages)).sort((a,b)=>a-b);
+
+    const addEllipsisIfGap = (prev, next) => {
+      if(next - prev > 1){
+        const span = document.createElement('span');
+        span.textContent = '…';
+        span.style.color = 'var(--muted)';
+        span.style.padding = '0 4px';
+        pageBtns.appendChild(span);
+      }
+    };
+
+    let prev = null;
+    uniqPages.forEach(p => {
+      if(prev !== null) addEllipsisIfGap(prev, p);
+
+      pageBtns.appendChild(
+        makeBtn(String(p), () => { currentPage = p; render(lastList); }, { primary: p === currentPage })
+      );
+      prev = p;
+    });
+
+    pageBtns.appendChild(
+      makeBtn('Next', () => { currentPage++; render(lastList); }, { disabled: currentPage === totalPages })
+    );
+  } else {
+    pager.style.display = 'none';
+  }
+
+  // Render cards for current page only
+  grid.innerHTML = pageItems.map(x => {
+    const w = num(x.width) ?? 0;
+    const l = num(x.length) ?? 0;
+    const area = w*l;
+
+    const sale = num(x.sale);
+    const price = num(x.price);
+    const p = priceToUse(x);
+
+    const img = splitImages(x.images)[0] || 'https://southtexassteelstuds.com/wp-content/uploads/2026/01/placeholder.png';
+    const badges = String(x.badges ?? '').split('|').map(t=>t.trim()).filter(Boolean);
+
+    return `
+      <div class="card">
+        <img src="${img}" alt="">
+        <div class="b">
+          <h3 class="name">${x.title || x.sku || 'Inventory Item'}</h3>
+          <div class="meta">${x.sku || ''}${x.type ? ' · '+x.type : ''}${x.roof ? ' · '+x.roof : ''}${w&&l ? ` · ${w}×${l} (${area} sf)` : ''}</div>
+
+          <div class="tags">
+            ${x.location ? `<span class="tag">${x.location}</span>` : ''}
+            ${x.availability ? `<span class="tag">${x.availability}</span>` : ''}
+            ${x.color ? `<span class="tag">${x.color}</span>` : ''}
+            ${badges.slice(0,3).map(b=>`<span class="tag">${b}</span>`).join('')}
+          </div>
+
+          <div class="priceRow">
+            <div class="price">$${Number(p).toLocaleString()}</div>
+            ${(sale !== null && sale > 0 && price !== null && price > sale) ? `<div class="strike">$${Number(price).toLocaleString()}</div>` : ''}
+          </div>
+
+          <div class="actions">
+            <div class="financeWrap" onclick="event.stopPropagation();">
+              <select class="financingSelect" onchange="goFinance(this.value); this.value='';">
+                <option value="">Financing</option>
+                <option value="acorn">Acorn</option>
+                <option value="hfs">HFS</option>
+                <option value="hearth">Hearth</option>
+              </select>
             </div>
           </div>
-        `;
-      }).join('');
-    }
+
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 
     function apply(){
-      let out = items.slice().filter(x => normalizeYesNo(x.show));
+  currentPage = 1;
+  let out = items.slice().filter(x => normalizeYesNo(x.show));
 
       const term = (q.value||"").trim().toLowerCase();
       if(term){
