@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>STSS Existing Inventory</title>
   <style>
+
+    /* Centers the whole inventory block inside GoDaddy sections/columns */
+#stssInvOuter{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+#stssInvOuter .wrap{
+  width:100%;
+  max-width:1400px;
+  margin:0 auto; /* keep */
+}
+
     :root{
       --card:#ffffff;
       --primary:#1f6fd6;
@@ -266,9 +280,8 @@ body{
   </style>
 </head>
 <body>
+  <div id="stssInvOuter">
   <div class="wrap">
-    <!-- <h2 class="title">Existing Inventory</h2>
-    <p class="sub">Live inventory pulled from Google Sheets. Click Sync to refresh.</p> -->
 
     <div class="top">
       <div class="search">
@@ -687,5 +700,6 @@ function render(list){
 
     sync(); // auto-load
   </script>
+    
 </body>
 </html>
